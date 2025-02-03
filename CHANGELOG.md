@@ -16,3 +16,4 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
   * open_source_license
   * timezone
   * postgresql_version
+* Fixed attribute 'editor' not found
