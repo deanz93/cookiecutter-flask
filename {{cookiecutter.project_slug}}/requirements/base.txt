@@ -1,0 +1,22 @@
+# Flask web framework
+flask==3.1.0
+flask-admin[all]
+Flask-Migrate==4.1.0
+Flask-Cors==5.0.0
+# Email
+Flask-Mail==0.10.0
+python-dotenv==1.0.1
+
+# Task queue
+{% if cookiecutter.use_celery == 'y' %}Celery==5.4.0{% endif %}
+{% if cookiecutter.use_redis == 'y' %}redis==5.2.1{% endif %}
+
+# Swagger
+{% if cookiecutter.use_swagger == 'y' %}Flasgger==0.9.7.1{% endif %}
+
+# Database
+psycopg2==2.9.10
+sqlalchemy==2.0.37
+sqlalchemy-utils==0.41.2
+
+pytz==2025.1

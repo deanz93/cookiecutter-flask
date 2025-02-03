@@ -1,0 +1,4 @@
+-r base.txt
+
+uwsgi==2.0.28
+pyuwsgi==2.0.28.post1
