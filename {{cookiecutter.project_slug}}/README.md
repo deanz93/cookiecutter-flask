@@ -76,12 +76,15 @@ celery -A config.celery_app worker -B -l info
 ```
 
 {%- endif %}
+{%- if cookiecutter.use_docker == "y" %}
 
 ### Docker Setup
 
 ```bash
 docker-compose up -d
 ```
+
+{%- endif %}
 
 {% if cookiecutter.use_swagger == 'y' %}
 Visit Swagger UI: <http://localhost:5000/apidocs/>

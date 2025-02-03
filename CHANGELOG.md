@@ -18,3 +18,4 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
   * postgresql_version
 * Fixed attribute 'editor' not found
 * Update README.md
+* Add command use_docker

@@ -12,6 +12,7 @@
     "Not open source"
   ],
   "timezone": "UTC",
+  "use_docker": "n",
   "postgresql_version": ["16", "15", "14", "13", "12"],
   "use_celery": "n",
   "use_redis": "n",
