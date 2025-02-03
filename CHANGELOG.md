@@ -20,3 +20,4 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Update README.md
 * Add command use_docker
 * Add docker with docker-compose
+* Update README.md

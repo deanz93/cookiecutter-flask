@@ -42,10 +42,6 @@ pip install -r requirements/local.txt
 pytest
 ```
 
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
-
 {%- if cookiecutter.use_celery == "y" %}
 
 ### Celery
@@ -58,8 +54,6 @@ To run a celery worker:
 cd {{cookiecutter.project_slug}}
 celery -A config.celery_app worker -l info
 ```
-
-Please note: For Celery's import magic to work, it is important _where_ the celery commands are run. If you are in the same folder with _manage.py_, you should be right.
 
 To run [periodic tasks](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), you'll need to start the celery beat scheduler service. You can start it as a standalone process:
 
