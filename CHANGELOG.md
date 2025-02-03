@@ -11,3 +11,8 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Add .env.example
 * Add .gitignore and .dockerignore
 * Add code quality package
+* Add more commands
+  * debug
+  * open_source_license
+  * timezone
+  * postgresql_version
