@@ -9,3 +9,4 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Move requirements to a folder and seperate by files
 * Add migrations folder for migrations
 * Add .env.example
+* Add .gitignore and .dockerignore
