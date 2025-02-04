@@ -9,7 +9,6 @@ for root, dirs, files in os.walk(f"{os.getcwd()}"):
         if file == 'models.py':
             models_files.append(os.path.join(root, file))
 
-print(models_files)
 # Extract class names from all models.py files
 class_names = []
 for models_file in models_files:
