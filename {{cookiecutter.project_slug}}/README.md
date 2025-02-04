@@ -79,7 +79,6 @@ docker-compose up -d
 ```
 
 {%- endif %}
-
 {% if cookiecutter.use_swagger == 'y' %}
 Visit Swagger UI: <http://localhost:5000/apidocs/>
 {% endif %}
