@@ -98,6 +98,9 @@ def main():
     else:
         remove_docker_files()
 
+    print("Copying .env.example to .env")
+    shutil.copy(".env.example", ".env")
+
     print(SUCCESS + "Project initialized, keep up the good work!" + TERMINATOR)
 
 

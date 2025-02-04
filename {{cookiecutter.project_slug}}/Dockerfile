@@ -1,5 +1,5 @@
 # Use an official Python runtime as a base image
-FROM python:3.12-slim
+FROM python:{{ cookiecutter.python_version }}-slim
 
 RUN apt-get update -y && apt-get install curl wget unzip gnupg2 locales -y
 
