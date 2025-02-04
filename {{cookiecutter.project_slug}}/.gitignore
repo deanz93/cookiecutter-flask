@@ -272,3 +272,6 @@ dump.rdb
 {{ cookiecutter.project_slug }}/media/
 
 .pytest_cache/
+
+{{ cookiecutter.project_slug }}/src/modules/** */
+!{{ cookiecutter.project_slug }}/src/modules/manager
