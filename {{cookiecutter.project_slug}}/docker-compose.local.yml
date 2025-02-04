@@ -21,12 +21,8 @@ services:
     env_file:
       - .env
     depends_on:
-      {% if cookiecutter.use_redis == 'y' %}
-      - redis
-      {% endif %}
-      {% if cookiecutter.use_celery == 'y' %}
-      - celery
-      {% endif %}
+      {% if cookiecutter.use_redis == 'y' %}- redis{% endif %}
+      {% if cookiecutter.use_celery == 'y' %}- celery{% endif %}
       - postgres
 
 {% if cookiecutter.use_redis == 'y' %}
@@ -51,8 +47,7 @@ services:
       - .:/app
     env_file:
       - .env
-    {% if cookiecutter.use_redis == 'y' %}
-    depends_on:
+    {% if cookiecutter.use_redis == 'y' %}depends_on:
       - redis
     {% endif %}
 {% endif %}
