@@ -1,61 +1,68 @@
-from flask import Blueprint, jsonify, request
-{% if cookiecutter.use_swagger == 'y' %}from flasgger import swag_from
-from .extensions import swagger{% endif %}
+from flask import Blueprint, jsonify
+from flask import current_app
+from flasgger import swag_from
 
 
 bp = Blueprint('views', __name__)
 
 
 @bp.route('/')
-{% if cookiecutter.use_swagger == 'y' %}@swag_from({
+@swag_from({
     'responses': {
-        200: {'description': 'Welcome message', 'examples': {'application/json': {'message': 'Welcome'}}}
+        200: {'description': 'Welcome message from Swagger', 'examples': {'application/json': {'message': 'Welcome'}}}
     }
-}){% endif %}
+})
 def index():
-    return jsonify({"message": "Welcome to {{ cookiecutter.project_name }}"})
+    return jsonify({"message": "Welcome to My Flask App"})
 
-
-{% if cookiecutter.use_swagger == 'y' %}@swagger.definition('Sum')
-class Sum(object):
-    """
-    Sum Object
-    ---
-    properties:
-        a:
-            type: integer
-        b:
-            type: integer
-    """
-    def __init__(self, a, b):
-        self.a = int(a)
-        self.b = int(b)
-
-    def dump(self):
-        return dict(vars(self).items())
-{% endif %}
-
-@bp.route('/api/v1/sum', methods=['POST'])
-def sum_numbers():
-    {% if cookiecutter.use_swagger == 'y' %}"""
-    An endpoint for testing requestBody documentation.
-    ---
-    description: Post a request body
-    requestBody:
-        content:
-            application/json:
-                schema:
-                    $ref: '#/components/schemas/Sum'
-        required: true
-    responses:
-        200:
-            description: The posted request body
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/Sum'
-    """{% endif %}
-    data = request.json
-    a = data.get('a')
-    b = data.get('b')
-    return jsonify({'result': a + b})
+@bp.route('/routes')
+@swag_from({
+    'responses': {
+        200: {
+            'description': 'List of routes',
+            'content': {
+                'application/json': {
+                    'schema': {
+                        'type': 'object',
+                        'properties': {
+                            'routes': {
+                                'type': 'array',
+                                'items': {
+                                    'type': 'object',
+                                    'properties': {
+                                        'endpoint': {'type': 'string'},
+                                        'methods': {
+                                            'type': 'array',
+                                            'items': {'type': 'string'}
+                                        },
+                                        'url': {'type': 'string'}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'examples': {
+                        'application/json': {
+                            'routes': [
+                                {
+                                    'endpoint': 'example_endpoint',
+                                    'methods': ['GET', 'POST'],
+                                    'url': '/example/url'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+})
+def list_routes():
+    routes = []
+    for rule in current_app.url_map.iter_rules():
+        routes.append({
+            'endpoint': rule.endpoint,
+            'methods': list(rule.methods),
+            'url': str(rule)
+        })
+    return jsonify({"routes": routes})
