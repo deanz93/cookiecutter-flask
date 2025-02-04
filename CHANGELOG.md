@@ -17,6 +17,7 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Add Makefile
 * Update requirements
 * Require redis_password
+* Fix cannot initialize celery
 
 ## 2025.02.03
 
