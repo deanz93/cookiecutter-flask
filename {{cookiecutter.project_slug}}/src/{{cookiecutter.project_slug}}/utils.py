@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from my_flask_app.models import Log
+from {{cookiecutter.project_slug}}.models import Log
 from .extensions import db
 
 
