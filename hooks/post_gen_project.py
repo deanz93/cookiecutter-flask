@@ -73,6 +73,7 @@ def remove_docker_files():
         ".dockerignore",
         "Dockerfile",
         "entrypoint.sh",
+        "Makefile",
     ]
     for file_name in file_names:
         Path(file_name).unlink()
