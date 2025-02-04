@@ -30,3 +30,6 @@ migrate:
 
 migrate.upgrade:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db upgrade
+
+db.seed:
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py seed run

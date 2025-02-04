@@ -1,10 +1,13 @@
 import os
 import re
 import textwrap
+from pathlib import Path
+
 
 # Search for all models.py files in all folder
 models_files = []
-for root, dirs, files in os.walk(f"{os.getcwd()}"):
+root_project = Path(__file__).parent.parent
+for root, dirs, files in os.walk(root_project):
     for file in files:
         if file == 'models.py':
             models_files.append(os.path.join(root, file))
@@ -18,7 +21,7 @@ for models_file in models_files:
         class_names.extend(classes)
 
 # Update the __init__.py file
-INIT_FILE = f"{os.getcwd()}/database/__init__.py"
+INIT_FILE = f"{root_project}/database/__init__.py"
 with open(INIT_FILE, 'r+', encoding='utf-8') as f:
     content = f.readlines()
 

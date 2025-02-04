@@ -1,6 +1,9 @@
+import click
 import os
 from database import __all__
+from database.seeder import seed_database
 from flask import Flask
+from flask.cli import AppGroup
 from sqlalchemy_utils import create_database, database_exists
 from .extensions import db, migrate, cors{% if cookiecutter.use_swagger == 'y' %}, swagger{% endif %}{% if cookiecutter.use_celery == 'y' %}, celery{% endif %}
 from .config import Config
@@ -31,5 +34,21 @@ def create_app(config_class=Config):
     celery.conf.update(app.config){% endif %}
 
     app.register_blueprint(views.bp)
+
+    seed_cli = AppGroup('seed')
+
+    # Flask CLI command
+    @seed_cli.command('run')
+    @click.option('--replace', is_flag=True, help='Clear existing data before seeding.')
+    def run_seed(replace):
+        """
+        Run the database seeder.
+
+        Args:
+            replace (bool): If True, clear existing data before seeding.
+        """
+        seed_database(replace=replace)
+
+    app.cli.add_command(seed_cli)
 
     return app
