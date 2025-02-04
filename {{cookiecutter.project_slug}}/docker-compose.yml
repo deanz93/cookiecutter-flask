@@ -60,14 +60,6 @@ services:
       - {{ cookiecutter.project_slug }}_dbbackups:/pg_backups
     healthcheck:
       test: "pg_isready -d postgres -U postgres"
-  # flower:
-  #   build:
-  #     context: ./compose/flower
-  #   command: celery -A tasks flower
-  #   ports:
-  #     - "5555:5555"
-  #   depends_on:
-  #     - celery
 
 volumes:
   {{ cookiecutter.project_slug }}_cache:
