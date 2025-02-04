@@ -24,7 +24,6 @@ services:
       {% if cookiecutter.use_redis == 'y' %}- redis{% endif %}
       {% if cookiecutter.use_celery == 'y' %}- celery{% endif %}
       - postgres
-
 {% if cookiecutter.use_redis == 'y' %}
   redis:
     container_name: {{ cookiecutter.project_slug }}_local_redis
@@ -37,7 +36,6 @@ services:
     env_file:
       - .env
 {% endif %}
-
 {% if cookiecutter.use_celery == 'y' %}
   celery:
     container_name: {{ cookiecutter.project_slug }}_local_celery
@@ -49,9 +47,8 @@ services:
       - .env
     {% if cookiecutter.use_redis == 'y' %}depends_on:
       - redis
-    {% endif %}
 {% endif %}
-
+{% endif %}
   postgres:
     container_name: {{ cookiecutter.project_slug }}_local_postgres
     image: postgres:{{ cookiecutter.postgresql_version }}-alpine
