@@ -20,6 +20,7 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Fix cannot initialize celery
 * Fix app run at 0.0.0.0
 * Fix example when using swagger
+* Restructure project
 
 ## 2025.02.03
 
