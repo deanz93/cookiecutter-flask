@@ -51,10 +51,8 @@ services:
     image: postgres:{{ cookiecutter.postgresql_version }}-alpine
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=steps_password
-      - POSTGRES_USER=steps_user
-      - POSTGRES_DB=steps
+    env_file:
+      - .env
     volumes:
       - {{ cookiecutter.project_slug }}_dbdata:/var/lib/postgresql/data
       - {{ cookiecutter.project_slug }}_dbbackups:/pg_backups
