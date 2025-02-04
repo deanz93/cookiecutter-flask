@@ -2,13 +2,20 @@
 Instance-specific configurations for the Flask application.
 """
 import os
+import pytz
 
 class Config:
     """
     Configuration settings for the Flask application.
     """
+    TIMEZONE = os.getenv('TIMEZONE', 'UTC')
+    tz = pytz.timezone(TIMEZONE)
+
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')
     DEBUG = os.getenv('FLASK_DEBUG', 'False') == 'True'
+    UPLOAD_FOLDER = os.path.abspath(os.getenv("UPLOAD_FOLDER", 'uploads'))
+    OUTPUT_FOLDER = os.path.abspath(os.getenv("OUTPUT_FOLDER", 'generated'))
+    STATIC_PATH = os.path.abspath(os.getenv("STATIC_PATH", 'staticfiles'))
     TESTING = os.getenv('FLASK_TESTING', 'False') == 'True'
     TEMPLATES_AUTO_RELOAD = True
 
