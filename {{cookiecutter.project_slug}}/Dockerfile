@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     python3-dev
 
 # Copy the application code to the working directory
-COPY . .
+COPY src .
 
 # Install dependencies
 RUN cd /app && pip install --no-cache-dir -r requirements/local.txt

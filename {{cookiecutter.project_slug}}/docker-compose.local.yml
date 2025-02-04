@@ -12,7 +12,7 @@ services:
     container_name: {{ cookiecutter.project_slug }}_local_flask
     build: .
     volumes:
-      - .:/app
+      - ./src:/app
     # flask requires SIGINT to stop gracefully
     # (default stop signal from Compose is SIGTERM)
     stop_signal: SIGINT
@@ -40,7 +40,7 @@ services:
     build: .
     command: celery -A app.celery worker --loglevel=info
     volumes:
-      - .:/app
+      -  ./src:/app
     env_file:
       - .env
     {% if cookiecutter.use_redis == 'y' %}depends_on:
