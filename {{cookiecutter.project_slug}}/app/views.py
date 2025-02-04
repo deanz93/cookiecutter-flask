@@ -54,8 +54,8 @@ def sum_numbers():
                 application/json:
                     schema:
                         $ref: '#/components/schemas/Sum'
-    """
-    {% endif %}
-    a = int(request.form.get('a'))
-    b = int(request.form.get('b'))
+    """{% endif %}
+    data = request.json
+    a = data.get('a')
+    b = data.get('b')
     return jsonify({'result': a + b})
