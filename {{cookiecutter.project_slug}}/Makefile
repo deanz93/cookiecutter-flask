@@ -8,7 +8,7 @@ flake8:
 	docker compose -f docker-compose.local.yml run --rm app flake8 .
 
 pylint:
-	docker compose -f docker-compose.local.yml run --rm app pylint app.py
+	docker compose -f docker-compose.local.yml run --rm app pylint run.py
 	docker compose -f docker-compose.local.yml run --rm app pylint src/**
 
 down:
@@ -19,3 +19,10 @@ stop:
 
 restart:
 	docker compose -f docker-compose.local.yml restart
+
+migrate:
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db migrate
+	make migrate.upgrade
+
+migrate.upgrade:
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db upgrade
