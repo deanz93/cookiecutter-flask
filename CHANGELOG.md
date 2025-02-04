@@ -23,6 +23,8 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Restructure project
 * Check if migrations folder exist
 * Auto discover models.py
+* Update table to include updated_at and created_at
+* Ability to load seeder
 
 ## 2025.02.03
 
