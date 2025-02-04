@@ -17,12 +17,12 @@ def remove_open_source_files():
     Removes open source files from the project.
 
     Removes the following files from the project:
-        - CONTRIBUTORS.txt
+        - CONTRIBUTORS.md
         - LICENSE
 
     These files are not needed for a closed source project.
     """
-    file_names = ["CONTRIBUTORS.txt", "LICENSE"]
+    file_names = ["CONTRIBUTORS.md", "LICENSE"]
     for file_name in file_names:
         Path(file_name).unlink()
 
