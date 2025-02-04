@@ -17,8 +17,9 @@
   "postgres_username": "postgres_user",
   "postgres_password": "postgres_password",
   "python_version": ["3.13", "3.12", "3.11", "3.10"],
-  "use_celery": "n",
-  "use_redis": "n",
-  "use_swagger": "n",
-  "debug": "n"
+  "use_celery": "y",
+  "use_redis": "y",
+  "redis_password": "redis_password",
+  "use_swagger": "y",
+  "debug": "y"
 }
