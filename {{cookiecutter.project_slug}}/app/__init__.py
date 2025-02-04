@@ -13,7 +13,8 @@ def create_app(config_class=Config):
     cors.init_app(app)
 
     {% if cookiecutter.use_swagger == 'y' %}swagger.init_app(app){% endif %}
-    {% if cookiecutter.use_celery == 'y' %}celery.init_app(app){% endif %}
+    {% if cookiecutter.use_celery == 'y' %}# Initialize Celery
+    celery.conf.update(app.config){% endif %}
 
     app.register_blueprint(views.bp)
 
