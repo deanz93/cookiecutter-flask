@@ -16,6 +16,7 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * copy env.example to .env
 * Add Makefile
 * Update requirements
+* Require redis_password
 
 ## 2025.02.03
 
