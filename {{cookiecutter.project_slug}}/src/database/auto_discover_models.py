@@ -26,7 +26,7 @@ with open(INIT_FILE, 'r+', encoding='utf-8') as f:
     content = f.readlines()
 
     # Ensure `from .base import db` is present and is the last import
-    BASE_IMPORT = 'from my_flask_app.extensions import db\n'
+    BASE_IMPORT = 'from {{cookiecutter.project_slug}}.extensions import db\n'
     if BASE_IMPORT not in content:
         LAST_IMPORT_LINE = -1
         for i, line in enumerate(content):

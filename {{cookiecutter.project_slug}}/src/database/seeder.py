@@ -2,12 +2,12 @@ import json
 import os
 import importlib
 from pathlib import Path
-from my_flask_app.extensions import db
+from {{cookiecutter.project_slug}}.extensions import db
 
 
 # List of fixture file paths
 FIXTURE_MAP = [
-    "my_flask_app/fixtures/modules.json",
+    "{{cookiecutter.project_slug}}/fixtures/modules.json",
 ]
 
 
