@@ -21,6 +21,8 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Fix app run at 0.0.0.0
 * Fix example when using swagger
 * Restructure project
+* Check if migrations folder exist
+* Auto discover models.py
 
 ## 2025.02.03
 
