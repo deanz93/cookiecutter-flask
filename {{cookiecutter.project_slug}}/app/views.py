@@ -37,7 +37,7 @@ class Sum(object):
 
 @bp.route('/api/v1/sum', methods=['POST'])
 def sum_numbers():
-    {% if cookiecutter.use_swagger == 'y' %} """
+    {% if cookiecutter.use_swagger == 'y' %}"""
     An endpoint for testing requestBody documentation.
     ---
     description: Post a request body
