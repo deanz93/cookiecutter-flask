@@ -24,6 +24,7 @@ migrate:
 	if [ ! -d "src/migrations" ]; then \
 		docker compose -f docker-compose.local.yml run --rm app flask --app run.py db init; \
 	fi
+	docker compose -f docker-compose.local.yml run --rm app python database/auto_discover_models.py
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db migrate
 	make migrate.upgrade
 
