@@ -92,4 +92,4 @@ experience better.
 
 ## Awesome Contributors
 
-![deanz93](https://avatars.githubusercontent.com/u/7959977?v=4){:height="124px" width="124px"}
+![deanz93](https://avatars.githubusercontent.com/u/7959977?v=4)
