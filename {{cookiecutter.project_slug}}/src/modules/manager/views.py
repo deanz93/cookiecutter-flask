@@ -4,7 +4,7 @@ import os
 import zipfile
 
 from flask import current_app
-from my_flask_app.extensions import db
+from {{cookiecutter.project_slug}}.extensions import db
 from .models import Module
 
 
@@ -23,7 +23,7 @@ def load_modules():
                 enable_module(module_name)
 
 def enable_module(module_name):
-    from my_flask_app.utils import log_action
+    from {{cookiecutter.project_slug}}.utils import log_action
     module_entry = Module.query.filter_by(name=module_name).first()
     if module_entry and not module_entry.enabled:
         module = importlib.import_module(f'modules.{module_name}')
@@ -34,7 +34,7 @@ def enable_module(module_name):
             log_action("Enabled Module", module_name)
 
 def disable_module(module_name):
-    from my_flask_app.utils import log_action
+    from {{cookiecutter.project_slug}}.utils import log_action
     module_entry = Module.query.filter_by(name=module_name).first()
     if module_entry and module_entry.enabled:
         rules_to_remove = [rule for rule in current_app.url_map.iter_rules() if rule.endpoint.startswith(module_name)]
@@ -57,7 +57,7 @@ def load_fixtures(module_path):
             db.session.commit()
 
 def install_module(zip_path):
-    from my_flask_app.utils import log_action
+    from {{cookiecutter.project_slug}}.utils import log_action
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
