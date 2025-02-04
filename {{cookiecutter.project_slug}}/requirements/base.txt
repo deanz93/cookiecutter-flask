@@ -1,6 +1,6 @@
 # Flask web framework
 flask==3.1.0
-flask-admin[all]
+flask-admin[all]==1.6.1
 Flask-Migrate==4.1.0
 Flask-Cors==5.0.0
 # Email
