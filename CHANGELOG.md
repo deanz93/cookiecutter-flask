@@ -1,7 +1,16 @@
 # Change Log
+
 All enhancements and patches to Cookiecutter Flask will be documented in this file.
 
 <!-- GENERATOR_PLACEHOLDER -->
+
+## 2025.02.04
+
+* Add file for opensource and non-opensource
+* Fixed docker-compose file
+  * Postgres env file
+  * Add more checking
+* Add post_gen_project.py file
 
 ## 2025.02.03
 
