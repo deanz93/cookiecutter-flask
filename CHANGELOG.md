@@ -18,6 +18,8 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Update requirements
 * Require redis_password
 * Fix cannot initialize celery
+* Fix app run at 0.0.0.0
+* Fix example when using swagger
 
 ## 2025.02.03
 
