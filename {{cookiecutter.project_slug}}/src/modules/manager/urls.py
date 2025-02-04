@@ -13,7 +13,6 @@ def admin():
     if request.method == 'POST':
         action = request.form.get('action')
         module_name = request.form.get('module')
-        print(module_name)
 
         if action == 'enable':
             enable_module(module_name)
