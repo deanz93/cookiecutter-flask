@@ -25,6 +25,7 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Auto discover models.py
 * Update table to include updated_at and created_at
 * Ability to load seeder
+* Add cookiecutter README.md
 
 ## 2025.02.03
 
