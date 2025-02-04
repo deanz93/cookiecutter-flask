@@ -8,7 +8,7 @@ It follows the Flask application factory pattern to prevent circular dependencie
 # initializing db in __init__.py
 # to prevent circular dependencies
 
-from {{cookiecutter.project_slug}}.models import Module, Log
+from modules.manager.models import Module, Log
 from {{cookiecutter.project_slug}}.extensions import db
 
 __all__ = ['db', 'Module', 'Log']

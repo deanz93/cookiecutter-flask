@@ -4,6 +4,7 @@ from database import __all__
 from database.seeder import seed_database
 from flask import Flask
 from flask.cli import AppGroup
+from modules.manager.urls import module_blueprint
 from sqlalchemy_utils import create_database, database_exists
 from .extensions import db, migrate, cors{% if cookiecutter.use_swagger == 'y' %}, swagger{% endif %}{% if cookiecutter.use_celery == 'y' %}, celery{% endif %}
 from .config import Config
@@ -36,6 +37,7 @@ def create_app(config_class=Config):
     celery.conf.update(app.config){% endif %}
 
     app.register_blueprint(views.bp)
+    app.register_blueprint(module_blueprint, url_prefix='/module')
 
     seed_cli = AppGroup('seed')
 

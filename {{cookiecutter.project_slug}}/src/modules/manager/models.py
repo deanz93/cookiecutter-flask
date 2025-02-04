@@ -8,7 +8,7 @@ The models defined here include:
 
 from sqlalchemy.sql import func
 from database.core import Mixin
-from .extensions import db
+from my_flask_app.extensions import db
 
 
 class Module(Mixin, db.Model):
