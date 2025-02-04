@@ -1,4 +1,5 @@
 import os
+from database import __all__
 from flask import Flask
 from sqlalchemy_utils import create_database, database_exists
 from .extensions import db, migrate, cors{% if cookiecutter.use_swagger == 'y' %}, swagger{% endif %}{% if cookiecutter.use_celery == 'y' %}, celery{% endif %}
