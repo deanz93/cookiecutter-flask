@@ -14,6 +14,7 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 * Fixed code wrongly formatted
 * Add cookiecutter.json requirements
 * copy env.example to .env
+* Add Makefile
 
 ## 2025.02.03
 
