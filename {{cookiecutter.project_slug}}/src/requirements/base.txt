@@ -20,3 +20,5 @@ sqlalchemy==2.0.37
 sqlalchemy-utils==0.41.2
 
 pytz==2025.1
+
+boto3==1.36.13

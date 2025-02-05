@@ -13,6 +13,7 @@ from modules.manager.urls import module_blueprint
 from . import views
 from .config import Config
 from .extensions import celery, cors, db, migrate, swagger
+from .extensions.S3 import S3Storage
 
 
 def create_app(config_class=Config):
@@ -39,6 +40,9 @@ def create_app(config_class=Config):
     {% if cookiecutter.use_swagger == 'y' %}swagger.init_app(app){% endif %}
     {% if cookiecutter.use_celery == 'y' %}# Initialize Celery
     celery.conf.update(app.config){% endif %}
+
+    {% if cookiecutter.use_cloud_storage == 'y' %}# Initialize the S3 extension
+    S3Storage(app){% endif %}
 
     app.register_blueprint(views.bp)
     app.register_blueprint(module_blueprint, url_prefix='/module')

@@ -1,4 +1,5 @@
 
+import os
 from pathlib import Path
 import shutil
 
@@ -54,6 +55,21 @@ def remove_utility_files():
         pass
 
 
+def remove_cloud_files():
+    """
+    Removes the s3 directory from the project.
+
+    This directory contains utility files such as scripts
+    and other useful files.
+    """
+    s3_path = os.path.join(os.getcwd(), 'src', '{{cookiecutter.project_slug}}', 'extensions', 'S3.py')
+    print(s3_path)
+    try:
+        Path(s3_path).unlink()
+    except FileNotFoundError:
+        pass
+
+
 def remove_docker_files():
     """
     Removes the docker files from the project.
@@ -98,6 +114,9 @@ def main():
         remove_utility_files()
     else:
         remove_docker_files()
+
+    if "{{ cookiecutter.use_cloud_storage }}".lower() != "y":
+        remove_cloud_files()
 
     print("Copying .env.example to .env")
     shutil.copy(".env.example", ".env")

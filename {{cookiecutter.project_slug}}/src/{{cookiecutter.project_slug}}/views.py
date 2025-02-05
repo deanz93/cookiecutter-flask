@@ -14,6 +14,13 @@ def index():
     return jsonify({"message": "Welcome to {{ cookiecutter.project_name }}"})
 
 
+{% if cookiecutter.use_cloud_storage == 'y' %}@bp.route('/s3/')
+def check_s3():
+    s3_storage = current_app.extensions['s3_storage']
+    response = s3_storage.list_objects(delimiter='/', prefix="/")
+    return jsonify(response)
+{% endif %}
+
 @bp.route('/routes')
 @swag_from({
     'responses': {
