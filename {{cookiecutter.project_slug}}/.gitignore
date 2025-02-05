@@ -273,5 +273,6 @@ dump.rdb
 
 .pytest_cache/
 
-{{ cookiecutter.project_slug }}/src/modules/** */
-!{{ cookiecutter.project_slug }}/src/modules/manager
+src/modules/**
+src/modules/manager
+src/migrations/
