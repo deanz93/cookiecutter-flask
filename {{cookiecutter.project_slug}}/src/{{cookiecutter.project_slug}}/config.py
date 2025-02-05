@@ -1,6 +1,7 @@
 """
 Instance-specific configurations for the Flask application.
 """
+import ast
 import os
 import pytz
 
@@ -30,6 +31,16 @@ class Config:
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///default.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    {% if cookiecutter.use_email_service == 'y' %}
+    MAIL_SERVER = os.getenv("MAIL_SERVER", 'localhost')
+    MAIL_PORT = int(os.getenv("MAIL_PORT", '25'))
+    MAIL_USE_TLS = ast.literal_eval(
+        os.getenv('MAIL_USE_TLS', 'True'))
+    MAIL_USE_SSL = ast.literal_eval(
+        os.getenv('MAIL_USE_SSL', 'False'))
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME", '')
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", '')
+    MAIL_DEFAULT_SENDER = os.getenv("DEFAULT_FROM_EMAIL"){% endif %}
 
     # CORS
     CORS_HEADERS = 'Content-Type'

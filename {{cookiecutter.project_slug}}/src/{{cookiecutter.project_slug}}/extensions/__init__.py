@@ -1,13 +1,15 @@
 from celery import Celery
-from flasgger import Swagger
+{% if cookiecutter.use_swagger == 'y' %}from flasgger import Swagger{% endif %}
 from flask_cors import CORS
+{% if cookiecutter.use_email_service == 'y' %}from flask_mail import Mail{% endif %}
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from .S3 import S3Storage
+{% if cookiecutter.use_cloud_storage == 'y' %}from .S3 import S3Storage{% endif %}
 
 db = SQLAlchemy()
 migrate = Migrate()
 cors = CORS()
 celery = Celery(__name__, broker='')
-swagger = Swagger()
-S3Storage()
+{% if cookiecutter.use_swagger == 'y' %}swagger = Swagger(){% endif %}
+{% if cookiecutter.use_email_service == 'y' %}mail = Mail(){% endif %}
+{% if cookiecutter.use_cloud_storage == 'y' %}S3Storage(){% endif %}
