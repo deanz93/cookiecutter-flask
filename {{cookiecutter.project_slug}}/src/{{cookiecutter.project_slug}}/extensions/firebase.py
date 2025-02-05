@@ -47,6 +47,26 @@ class Firebase(object):
             self.init_app(app)
 
     def init_app(self, app):
+        """
+        Initializes the Firebase app.
+
+        Parameters:
+            app (Flask): The Flask application instance.
+
+        Returns:
+            None
+
+        Raises:
+            FileNotFoundError: If the credentials file is not found.
+            Exception: If an error occurs while initializing the Firebase client.
+
+        Initializes the Firebase app using the provided Flask app instance.
+        It retrieves the Google credentials from the instance's configuration,
+        creates a Firestore client, and sets up the Firebase app.
+        If the credentials file is not found, it raises a FileNotFoundError.
+        If an error occurs while initializing the Firebase client, it logs
+        the error using the Flask app's logger.
+        """
         try:
             print('Initializing Firebase...')
             if not os.path.isfile(app.config.get('GOOGLE_CREDENTIALS_FILEPATH')):
