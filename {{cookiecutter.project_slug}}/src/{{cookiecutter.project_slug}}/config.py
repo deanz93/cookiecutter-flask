@@ -62,7 +62,7 @@ class Config:
 
     # Timezone Settings
     TIMEZONE = os.getenv('TIMEZONE', 'UTC')
-{% if cookiecutter.authentication_type == 1 %}
+{% if cookiecutter.authentication_type == "Firebase" %}
     DEFAULT_GOOGLE_SDK_FILEPATH = os.path.join(os.path.dirname(__file__), "google-credentials.json")
     GOOGLE_CREDENTIALS_FILEPATH = os.getenv(
         "GOOGLE_CREDENTIALS_FILEPATH",

@@ -27,5 +27,5 @@ boto3==1.36.13{% endif %}
 {% if cookiecutter.use_email_service == 'y' %}# Email
 Flask-Mail==0.10.0{% endif %}
 
-{% if cookiecutter.authentication_type == 1 %}# Firebase
+{% if cookiecutter.authentication_type == "Firebase" %}# Firebase
 firebase-admin==6.6.0{% endif %}
