@@ -1,9 +1,11 @@
+import importlib
 import click
 import os
 from database import __all__
 from database.seeder import seed_database
 from flask import Flask
 from flask.cli import AppGroup
+from modules.manager.models import Module
 from modules.manager.urls import module_blueprint
 from sqlalchemy_utils import create_database, database_exists
 from .extensions import db, migrate, cors{% if cookiecutter.use_swagger == 'y' %}, swagger{% endif %}{% if cookiecutter.use_celery == 'y' %}, celery{% endif %}
@@ -18,6 +20,7 @@ def create_app(config_class=Config):
     app.config.from_pyfile('config.py', silent=True)
 
     db.init_app(app)
+    load_modules(app)
 
     if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
         print("db not exist. Creating..")
@@ -55,3 +58,19 @@ def create_app(config_class=Config):
     app.cli.add_command(seed_cli)
 
     return app
+
+def load_modules(app):
+    modules_dir = 'modules'
+
+    for module_name in os.listdir(modules_dir):
+        module_path = os.path.join(modules_dir, module_name)
+        print(module_path)
+        with app.app_context():
+            if os.path.isdir(module_path) and os.path.exists(os.path.join(module_path, '__init__.py')):
+                module_entry = Module.query.filter_by(name=module_name, enabled=True).first()
+                print(module_entry)
+                if module_entry:
+                    module = importlib.import_module(f'modules.{module_name}.modules')
+                    if hasattr(module, 'register'):
+                        app.register_blueprint(module.register())
+                        importlib.reload(module)

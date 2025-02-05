@@ -5,7 +5,6 @@ import zipfile
 
 from flask import current_app
 from {{cookiecutter.project_slug}}.extensions import db
-from .module_loader import load_modules
 from .models import Module
 
 
@@ -18,7 +17,6 @@ def enable_module(module_name):
         module_entry.enabled = True
         db.session.commit()
         log_action("Enabled Module", module_name)
-        load_modules(current_app)
         return "Restarting Flask..."
 
 def disable_module(module_name):
@@ -53,7 +51,7 @@ def install_module(zip_path):
             module_name = extracted_dirs[0].split('/')[0]
             module_entry = Module.query.filter_by(name=module_name).first()
             if not module_entry:
-                module_entry = Module(name=module_name, enabled=False, version='1.0.0')
+                module_entry = Module(name=module_name, enabled=True, version='1.0.0')
                 db.session.add(module_entry)
                 db.session.commit()
                 load_fixtures(os.path.join('modules', module_name))
