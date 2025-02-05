@@ -14,4 +14,4 @@ celery = Celery(__name__, broker='')
 {% if cookiecutter.use_swagger == 'y' %}swagger = Swagger(){% endif %}
 {% if cookiecutter.use_email_service == 'y' %}mail = Mail(){% endif %}
 {% if cookiecutter.use_cloud_storage == 'y' %}S3Storage(){% endif %}
-{% if cookiecutter.authentication_type == "Firebase" %}Firebase(){% endif %}
+{% if cookiecutter.authentication_type == "Firebase" %}firebase = Firebase(){% endif %}

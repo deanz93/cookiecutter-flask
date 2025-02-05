@@ -6,6 +6,7 @@ This class provides methods to interact with the Firebase Admin SDK.
 """
 from firebase_admin import credentials, initialize_app, firestore
 
+from flask import current_app
 
 
 class Firebase(object):
@@ -24,7 +25,7 @@ class Firebase(object):
         __init__: Initializes the Firebase instance.
     """
 
-    def __init__(self, app):
+    def __init__(self, app=None):
         """
         Initializes a new instance of the Firebase class.
 
@@ -37,6 +38,20 @@ class Firebase(object):
         Returns:
             None
         """
-        self.creds = credentials.Certificate(app.config.get('GOOGLE_CREDENTIALS_FILEPATH'))
-        self.app = initialize_app(self.creds)
-        self.db = firestore.client()
+        self.creds = None
+        self.app = None
+        self.db = None
+
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        try:
+            print('Initializing Firebase...')
+            self.creds = credentials.Certificate(app.config.get('GOOGLE_CREDENTIALS_FILEPATH'))
+            self.app = initialize_app(self.creds)
+            self.db = firestore.client()
+        except Exception as e:
+            with app.app_context():
+                current_app.logger.error(f"\033[93mFailed to initialize Firebase client.\
+                    Please check .env:\033[0m {e}")
