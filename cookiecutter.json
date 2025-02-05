@@ -17,9 +17,9 @@
     "Not open source"
   ],
   "timezone": "UTC",
-  "use_cloud_storage": "n",
-  "use_email_service": "n",
-  "use_docker": "n",
+  "use_cloud_storage": "y",
+  "use_email_service": "y",
+  "use_docker": "y",
   "postgresql_version": ["16", "15", "14", "13", "12"],
   "postgres_username": "postgres_user",
   "postgres_password": "postgres_password",

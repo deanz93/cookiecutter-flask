@@ -21,12 +21,12 @@ class Firebase(object):
         db (firestore.Client): The Firestore client.
 
     Methods:
-        __init__: Initializes the FirebaseService instance.
+        __init__: Initializes the Firebase instance.
     """
 
     def __init__(self, app):
         """
-        Initializes a new instance of the FirebaseService class.
+        Initializes a new instance of the Firebase class.
 
         Sets up the Firebase credentials, initializes the Firebase app,
         and creates a Firestore client.

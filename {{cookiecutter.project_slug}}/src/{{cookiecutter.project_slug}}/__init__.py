@@ -20,7 +20,7 @@ from .extensions import (
     {% if cookiecutter.use_swagger == 'y' %}swagger,{% endif %}
     {% if cookiecutter.use_email_service == 'y' %}mail,{% endif %}
     {% if cookiecutter.use_cloud_storage == 'y' %}S3Storage,{% endif %}
-    {% if cookiecutter.authentication_type == "Firebase" %}FirebaseService,{% endif %}
+    {% if cookiecutter.authentication_type == "Firebase" %}Firebase,{% endif %}
     )
 
 
@@ -54,7 +54,7 @@ def create_app(config_class=Config):
     {% if cookiecutter.use_email_service == 'y' %}# Initialize the Mail
     mail.init_app(app){% endif %}
 
-    {% if cookiecutter.authentication_type == "Firebase" %}FirebaseService(){% endif %}
+    {% if cookiecutter.authentication_type == "Firebase" %}Firebase(){% endif %}
 
     app.register_blueprint(views.bp)
     app.register_blueprint(module_blueprint, url_prefix='/module')
