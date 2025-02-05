@@ -19,7 +19,7 @@ from .extensions import (
     migrate,
     {% if cookiecutter.use_swagger == 'y' %}swagger,{% endif %}
     {% if cookiecutter.use_email_service == 'y' %}mail,{% endif %}
-    {% if cookiecutter.use_cloud_storage == 'y' %}S3Storage,{% endif %}
+    {% if cookiecutter.use_cloud_storage == 'y' %}s3,{% endif %}
     {% if cookiecutter.authentication_type == "Firebase" %}firebase,{% endif %}
     )
 
@@ -50,7 +50,7 @@ def create_app(config_class=Config):
     celery.conf.update(app.config){% endif %}
 
     {% if cookiecutter.use_cloud_storage == 'y' %}# Initialize the S3 extension
-    S3Storage(app){% endif %}
+    s3.init_app(app){% endif %}
     {% if cookiecutter.use_email_service == 'y' %}# Initialize the Mail
     mail.init_app(app){% endif %}
 
