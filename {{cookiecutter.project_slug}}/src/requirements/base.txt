@@ -8,8 +8,8 @@ Flask-Mail==0.10.0
 python-dotenv==1.0.1
 
 # Task queue
-{% if cookiecutter.use_celery == 'y' %}Celery==5.4.0{% endif %}
-{% if cookiecutter.use_redis == 'y' %}redis==5.2.1{% endif %}
+{% if cookiecutter.use_celery == 'y' %}Celery==5.4.0
+redis==5.2.1{% endif %}
 
 # Swagger
 {% if cookiecutter.use_swagger == 'y' %}Flasgger==0.9.7.1{% endif %}

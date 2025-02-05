@@ -19,10 +19,10 @@ services:
     env_file:
       - .env
     depends_on:
-      {% if cookiecutter.use_redis == 'y' %}- redis{% endif %}
-      {% if cookiecutter.use_celery == 'y' %}- celery{% endif %}
+      {% if cookiecutter.use_celery == 'y' %}- redis
+      - celery{% endif %}
       - postgres
-{% if cookiecutter.use_redis == 'y' %}
+{% if cookiecutter.use_celery == 'y' %}
   redis:
     container_name: {{ cookiecutter.project_slug }}_local_redis
     image: redis:7.0-alpine
@@ -43,9 +43,8 @@ services:
       -  ./src:/app
     env_file:
       - .env
-    {% if cookiecutter.use_redis == 'y' %}depends_on:
+    depends_on:
       - redis
-{% endif %}
 {% endif %}
   postgres:
     container_name: {{ cookiecutter.project_slug }}_local_postgres

@@ -46,9 +46,9 @@ class Config:
     CORS_HEADERS = 'Content-Type'
     ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*')  # e.g., 'https://example.com'
 
-    {% if cookiecutter.use_redis == 'y' %}# Redis Settings
+    {% if cookiecutter.use_celery == 'y' %}# Redis Settings
     REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-    {% endif %}{% if cookiecutter.use_celery == 'y' %}# Celery Settings
+    # Celery Settings
     CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
     CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0'){% endif %}
 
