@@ -7,6 +7,7 @@ The models defined here include:
 """
 
 from sqlalchemy.sql import func
+
 from database.core import Mixin
 from {{cookiecutter.project_slug}}.extensions import db
 

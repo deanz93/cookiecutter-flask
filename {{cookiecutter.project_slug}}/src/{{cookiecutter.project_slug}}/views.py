@@ -1,7 +1,5 @@
-from flask import Blueprint, jsonify
-from flask import current_app
 from flasgger import swag_from
-
+from flask import Blueprint, current_app, jsonify
 
 bp = Blueprint('views', __name__)
 
@@ -14,6 +12,7 @@ bp = Blueprint('views', __name__)
 })
 def index():
     return jsonify({"message": "Welcome to My Flask App"})
+
 
 @bp.route('/routes')
 @swag_from({

@@ -1,10 +1,12 @@
 import os
-from flask import Blueprint, request, flash, redirect, url_for, render_template
+
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+
 from .models import Module, Log
 from .views import enable_module, disable_module, install_module
 
 
-module_blueprint=Blueprint('module', __name__, template_folder='templates')
+module_blueprint = Blueprint('module', __name__, template_folder='templates')
 
 
 # Admin panel

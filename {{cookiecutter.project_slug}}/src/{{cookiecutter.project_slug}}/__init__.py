@@ -1,16 +1,18 @@
 import importlib
-import click
 import os
-from database import __all__
-from database.seeder import seed_database
+
+import click
 from flask import Flask
 from flask.cli import AppGroup
+from sqlalchemy_utils import create_database, database_exists
+
+from database.seeder import seed_database
 from modules.manager.models import Module
 from modules.manager.urls import module_blueprint
-from sqlalchemy_utils import create_database, database_exists
-from .extensions import db, migrate, cors{% if cookiecutter.use_swagger == 'y' %}, swagger{% endif %}{% if cookiecutter.use_celery == 'y' %}, celery{% endif %}
-from .config import Config
+
 from . import views
+from .config import Config
+from .extensions import celery, cors, db, migrate, swagger
 
 
 def create_app(config_class=Config):
@@ -58,6 +60,7 @@ def create_app(config_class=Config):
     app.cli.add_command(seed_cli)
 
     return app
+
 
 def load_modules(app):
     modules_dir = 'modules'

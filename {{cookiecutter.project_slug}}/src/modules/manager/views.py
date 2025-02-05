@@ -4,7 +4,9 @@ import os
 import zipfile
 
 from flask import current_app
+
 from {{cookiecutter.project_slug}}.extensions import db
+
 from .models import Module
 
 
@@ -19,6 +21,7 @@ def enable_module(module_name):
         log_action("Enabled Module", module_name)
         return "Restarting Flask..."
 
+
 def disable_module(module_name):
     from {{cookiecutter.project_slug}}.utils import log_action
     module_entry = Module.query.filter_by(name=module_name).first()
@@ -31,6 +34,7 @@ def disable_module(module_name):
         db.session.commit()
         log_action("Disabled Module", module_name)
 
+
 def load_fixtures(module_path):
     fixtures_path = os.path.join(module_path, 'fixtures.json')
     if os.path.exists(fixtures_path):
@@ -41,6 +45,7 @@ def load_fixtures(module_path):
                 for record in records:
                     db.session.add(model_class(**record))
             db.session.commit()
+
 
 def install_module(zip_path):
     from {{cookiecutter.project_slug}}.utils import log_action

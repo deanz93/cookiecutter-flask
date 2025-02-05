@@ -1,4 +1,5 @@
 from modules.manager.models import Log
+
 from .extensions import db
 
 
