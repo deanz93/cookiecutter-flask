@@ -12,8 +12,16 @@ from modules.manager.urls import module_blueprint
 
 from . import views
 from .config import Config
-from .extensions import celery, cors, db, migrate, swagger, mail
-from .extensions.S3 import S3Storage
+from .extensions import (
+    {% if cookiecutter.use_celery == 'y' %}celery,{% endif %}
+    cors,
+    db,
+    migrate,
+    {% if cookiecutter.use_swagger == 'y' %}swagger,{% endif %}
+    {% if cookiecutter.use_email_service == 'y' %}mail,{% endif %}
+    {% if cookiecutter.use_cloud_storage == 'y' %}S3Storage,{% endif %}
+    {% if cookiecutter.authentication_type == 1 %}FirebaseService,{% endif %}
+    )
 
 
 def create_app(config_class=Config):
@@ -45,6 +53,8 @@ def create_app(config_class=Config):
     S3Storage(app){% endif %}
     {% if cookiecutter.use_email_service == 'y' %}# Initialize the Mail
     mail.init_app(app){% endif %}
+
+    {% if cookiecutter.authentication_type == 1 %}FirebaseService(){% endif %}
 
     app.register_blueprint(views.bp)
     app.register_blueprint(module_blueprint, url_prefix='/module')
