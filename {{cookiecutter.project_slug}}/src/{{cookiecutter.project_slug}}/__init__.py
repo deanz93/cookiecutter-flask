@@ -67,11 +67,9 @@ def load_modules(app):
 
     for module_name in os.listdir(modules_dir):
         module_path = os.path.join(modules_dir, module_name)
-        print(module_path)
         with app.app_context():
             if os.path.isdir(module_path) and os.path.exists(os.path.join(module_path, '__init__.py')):
                 module_entry = Module.query.filter_by(name=module_name, enabled=True).first()
-                print(module_entry)
                 if module_entry:
                     module = importlib.import_module(f'modules.{module_name}.modules')
                     if hasattr(module, 'register'):
