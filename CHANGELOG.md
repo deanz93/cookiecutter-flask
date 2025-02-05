@@ -4,6 +4,11 @@ All enhancements and patches to Cookiecutter Flask will be documented in this fi
 
 <!-- GENERATOR_PLACEHOLDER -->
 
+## 2025.02.05
+
+* Fix loading new module
+* Fix isort and pylint
+
 ## 2025.02.04
 
 * Add file for opensource and non-opensource
