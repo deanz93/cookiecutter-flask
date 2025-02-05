@@ -5,33 +5,21 @@ import zipfile
 
 from flask import current_app
 from {{cookiecutter.project_slug}}.extensions import db
+from .module_loader import load_modules
 from .models import Module
 
-
-def load_modules():
-    modules_dir = 'modules'
-    for module_name in os.listdir(modules_dir):
-        module_path = os.path.join(modules_dir, module_name)
-        if os.path.isdir(module_path) and os.path.exists(os.path.join(module_path, '__init__.py')):
-            module_entry = Module.query.filter_by(name=module_name).first()
-            if not module_entry:
-                module_entry = Module(name=module_name, enabled=False)
-                db.session.add(module_entry)
-                db.session.commit()
-
-            if module_entry.enabled:
-                enable_module(module_name)
 
 def enable_module(module_name):
     from {{cookiecutter.project_slug}}.utils import log_action
     module_entry = Module.query.filter_by(name=module_name).first()
+
     if module_entry and not module_entry.enabled:
-        module = importlib.import_module(f'modules.{module_name}')
-        if hasattr(module, 'init_app'):
-            module.init_app(current_app, db)
-            module_entry.enabled = True
-            db.session.commit()
-            log_action("Enabled Module", module_name)
+        importlib.import_module(f'modules.{module_name}.modules')
+        module_entry.enabled = True
+        db.session.commit()
+        log_action("Enabled Module", module_name)
+        load_modules(current_app)
+        return "Restarting Flask..."
 
 def disable_module(module_name):
     from {{cookiecutter.project_slug}}.utils import log_action
