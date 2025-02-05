@@ -7,11 +7,11 @@ bp = Blueprint('views', __name__)
 @bp.route('/')
 @swag_from({
     'responses': {
-        200: {'description': 'Welcome message from Swagger', 'examples': {'application/json': {'message': 'Welcome'}}}
+        200: {'description': 'Welcome message from Swagger {{ cookiecutter.project_name }}', 'examples': {'application/json': {'message': 'Welcome'}}}
     }
 })
 def index():
-    return jsonify({"message": "Welcome to My Flask App"})
+    return jsonify({"message": "Welcome to {{ cookiecutter.project_name }}"})
 
 
 @bp.route('/routes')
