@@ -4,6 +4,7 @@ Contains the Firebase class.
 This class provides methods to interact with the Firebase Admin SDK.
 
 """
+import os
 from firebase_admin import credentials, initialize_app, firestore
 
 from flask import current_app
@@ -48,10 +49,11 @@ class Firebase(object):
     def init_app(self, app):
         try:
             print('Initializing Firebase...')
+            if not os.path.isfile(app.config.get('GOOGLE_CREDENTIALS_FILEPATH')):
+                raise FileNotFoundError(f"File {app.config.get('GOOGLE_CREDENTIALS_FILEPATH')} not found.")
             self.creds = credentials.Certificate(app.config.get('GOOGLE_CREDENTIALS_FILEPATH'))
             self.app = initialize_app(self.creds)
             self.db = firestore.client()
         except Exception as e:
             with app.app_context():
-                current_app.logger.error(f"\033[93mFailed to initialize Firebase client.\
-                    Please check .env:\033[0m {e}")
+                current_app.logger.error(f"\033[93mFailed to initialize Firebase client.{e}\033[0m ")

@@ -12,9 +12,15 @@ class S3Storage(object):
         if app is not None:
             self.init_app(app)
 
+
     def init_app(self, app):
         try:
             print('Initializing S3 client...')
+            if (not app.config.get('S3_REGION') or
+                    not app.config.get('S3_ENDPOINT') or
+                    not app.config.get('S3_ACCESS_KEY') or
+                    not app.config.get('S3_SECRET_KEY')):
+                raise ValueError("S3 configuration is not complete. Please check your .env file.")
             self.s3_client = boto3.client(
                 's3',
                 region_name=app.config.get('S3_REGION'),
@@ -27,8 +33,8 @@ class S3Storage(object):
             app.extensions['s3_storage'] = self  # Register extension
         except Exception as e:
             with app.app_context():
-                current_app.logger.error(f"\033[93mFailed to initialize S3 client.\
-                    Please check .env:\033[0m {e}")
+                current_app.logger.error(f"\033[93mFailed to initialize S3 client. {e}\033[0m ")
+
 
     def upload_file(self, file_path, s3_key):
         try:
@@ -46,6 +52,7 @@ class S3Storage(object):
             current_app.logger.error(f"Failed to download file from S3: {e}")
             return None
 
+
     def delete_file(self, s3_key):
         try:
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=s3_key)
@@ -53,6 +60,7 @@ class S3Storage(object):
         except Exception as e:
             current_app.logger.error(f"Failed to delete file from S3: {e}")
             return False
+
 
     def list_objects(self, prefix='', delimiter='/'):
         try:
