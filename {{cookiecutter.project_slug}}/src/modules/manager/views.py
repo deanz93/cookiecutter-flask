@@ -1,6 +1,7 @@
 import importlib
 import json
 import os
+import shutil
 import zipfile
 
 from flask import current_app
@@ -61,3 +62,122 @@ def install_module(zip_path):
                 db.session.commit()
                 load_fixtures(os.path.join('modules', module_name))
                 log_action("Installed Module", module_name)
+
+
+def create_module(path, name):
+    """
+    Create a new folder and files (__init__.py, urls.py, views.py),
+    along with a models folder and a file in capitalized format.
+    Usage:
+        flask generate module --name ModuleName
+    """
+    path = os.path.abspath(path)  # Convert to absolute path
+    module_name = name.capitalize()  # Ensure module name is capitalized
+
+    # Ensure the main path exists or create it
+    if os.path.exists(path):
+        overwrite = input(f"Module named '{name}' already exists. Overwriting will delete existing data. Do you want to proceed? (yes/no): ").strip().lower()
+        if overwrite not in ('yes', 'y'):
+            print("Operation cancelled.")
+            return
+        shutil.rmtree(path, ignore_errors=False, onerror=None)
+
+    try:
+        os.makedirs(path, exist_ok=True)
+        print(f"Directory created at: {path}")
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+        return
+
+    # Define the files to be created
+    main_files = ["__init__.py", "urls.py", "utils.py", "views.py", "models.py", "modules.py"]
+    # main_files = ["__init__.py", "admins.py", "forms.py", "urls.py", "utils.py", "views.py", "models.py", "modules.py"]
+
+    for file in main_files:
+        file_path = os.path.join(path, file)
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                # Add boilerplate content based on the file type
+                if file == "__init__.py":
+                    f.write("# This is the __init__.py file for this module\n")
+                elif file == "admins.py":
+                    f.write(
+                        "# Define your admin views here\n"
+                        "from flask_admin import BaseView, expose\n\n"
+                    )
+                elif file == "forms.py":
+                    f.write(
+                        "# Define your forms here\n"
+                        "from wtforms import Form, StringField, validators\n\n"
+                    )
+                elif file == "urls.py":
+                    f.write(
+                        "# Define your routes here\n"
+                        "from flask import Blueprint, request, jsonify\n"
+                        f"from {current_app.import_name}.extensions import swagger\n\n"
+                        f"{name.lower()}_bp = Blueprint('{name.lower()}', __name__)\n\n"
+                    )
+                elif file == "utils.py":
+                    f.write("# Define your utility functions here\n")
+                elif file == "views.py":
+                    f.write(
+                        "# Define your views here\n"
+                        "from flask import render_template, request\n\n"
+                    )
+                elif file == "models.py":
+                    f.write(
+                        "# Define your models here\n"
+                        "import uuid\n"
+                        "\n"
+                        "from sqlalchemy.sql import func\n"
+                        "\n"
+                        "from database.core import Mixin\n"
+                        f"from {current_app.import_name}.extensions import db\n"
+                        "\n\n"
+                        f"class {module_name}(Mixin, db.Model):\n"
+                        "\n"
+                        f"    __tablename__ = '{module_name.lower()}_{name.lower()}'\n"
+                        "\n"
+                        "    id = db.Column(\n"
+                        "        db.String(36),\n"
+                        "        primary_key=True,\n"
+                        "        default=lambda: str(uuid.uuid4())\n"
+                        "    )\n"
+                    )
+                elif file == "modules.py":
+                    f.write(
+                        "# Register your blueprint here\n"
+                        f"from .urls import {name.lower()}_blueprint\n\n"
+                        "def register():\n"
+                        f"    return {name.lower()}_blueprint\n"
+                    )
+            print(f"File created: {file_path}")
+        except Exception as e:
+            print(f"Error creating file {file}: {e}")
+
+    # Create the models folder and file
+    models_folder = os.path.join(path, "templates")
+    try:
+        os.makedirs(models_folder, exist_ok=True)
+        print(f"Models directory created at: {models_folder}")
+
+        # Create the models file with capitalized name
+        template_file_path = os.path.join(models_folder, f"{module_name.lower()}.html")
+        with open(template_file_path, "w", encoding="utf-8") as f:
+            f.write("<!DOCTYPE html>\n")
+            f.write("<html lang='en'>\n")
+            f.write("<head>\n")
+            f.write("    <meta charset='UTF-8'>\n")
+            f.write("    <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
+            f.write("    <title>{}</title>\n".format(module_name.lower()))
+            f.write("</head>\n")
+            f.write("<body>\n")
+            f.write("    <h1>{}</h1>\n".format(module_name.lower()))
+            f.write("    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>\n")
+            f.write("</body>\n")
+            f.write("</html>\n")
+        print(f"Models file created: {template_file_path}")
+    except Exception as e:
+        print(f"Error creating models folder or file: {e}")
+
+    print("Module creation complete!")

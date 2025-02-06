@@ -9,6 +9,8 @@ from sqlalchemy_utils import create_database, database_exists
 from database.seeder import seed_database
 from modules.manager.models import Module
 from modules.manager.urls import module_blueprint
+from modules.manager.views import create_module
+
 
 from . import views
 from .config import Config
@@ -74,6 +76,27 @@ def create_app(config_class=Config):
         seed_database(replace=replace)
 
     app.cli.add_command(seed_cli)
+
+    generate_module = AppGroup("module")
+
+    @generate_module.command("generate")
+    # @click.option('--path', required=True, help="The directory path where the new module will be created.")
+    @click.option('--name', required=True, help="The desired name for the new module, used for the models file.")
+    def generate_new_module(name):
+        """
+        Create a new module in the specified directory with the given name.
+
+        Args:
+            name (str): Name of the module, which will be capitalized.
+
+        Returns:
+            None
+        """
+        path = os.path.abspath(os.getcwd())
+        path_to_module = os.path.join(path, 'modules', name)
+        create_module(path_to_module, name)
+
+    app.cli.add_command(generate_module)
 
     return app
 
