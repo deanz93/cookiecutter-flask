@@ -1,9 +1,13 @@
+"""
+Module containing the User, Organization model.
+"""
 import uuid
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash
 
 from database.core import Mixin
-from aa.extensions import db
+from {{ cookiecutterproject_slug }}.extensions import db
+
 
 class User(Mixin, db.Model):
     """Person Table."""
