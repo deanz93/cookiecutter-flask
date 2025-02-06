@@ -5,9 +5,11 @@ This class provides methods to interact with the Firebase Admin SDK.
 
 """
 import os
+import functools
+from firebase_admin import auth as firebase_auth
 from firebase_admin import credentials, initialize_app, firestore
 
-from flask import current_app
+from flask import current_app, request, jsonify
 
 
 class Firebase(object):
@@ -77,3 +79,29 @@ class Firebase(object):
         except Exception as e:
             with app.app_context():
                 current_app.logger.error(f"\033[93mFailed to initialize Firebase client.{e}\033[0m ")
+
+
+def firebase_auth_required(func):
+    """
+    A decorator to verify a Firebase ID token and attach user information to the current request.
+
+    Args:
+        func: The function to decorate.
+
+    Returns:
+        A function that checks the Authorization header of the request for a valid Firebase ID token
+        and attaches the user information to the request if valid.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return jsonify({"error": "Missing or invalid token"}), 401
+        token = auth_header.split(" ")[1]
+        try:
+            decoded_token = firebase_auth.verify_id_token(token)
+            request.user = decoded_token  # Attach user info to request
+        except Exception as e:
+            return jsonify({"error": "Invalid token", "details": str(e)}), 401
+        return func(*args, **kwargs)
+    return wrapper
