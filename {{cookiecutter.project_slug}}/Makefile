@@ -20,19 +20,22 @@ stop:
 restart:
 	docker compose -f docker-compose.local.yml restart
 
-migrate:
+db.migrate:
 	if [ ! -d "src/migrations" ]; then \
 		docker compose -f docker-compose.local.yml run --rm app flask --app run.py db init; \
 	fi
-	docker compose -f docker-compose.local.yml run --rm app python database/auto_discover_models.py
+	make db.auto_discover_models
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db migrate
-	make migrate.upgrade
+	make db.migrate.upgrade
 
-migrate.upgrade:
+db.migrate.upgrade:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db upgrade
 
 db.seed:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py seed run
+
+db.auto_discover_models:
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py database auto_discover
 
 module.create:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py module generate --name $(module)

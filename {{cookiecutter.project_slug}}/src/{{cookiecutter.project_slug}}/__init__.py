@@ -6,9 +6,9 @@ from flask import Flask
 from flask.cli import AppGroup
 from sqlalchemy_utils import create_database, database_exists
 
+from database.auto_discover_models import auto_load_models
 from database.seeder import seed_database
 from modules.manager.models import Module
-from modules.manager.urls import module_blueprint
 from modules.manager.views import create_module
 
 
@@ -69,10 +69,11 @@ def create_app(config_class=Config):
     app.register_blueprint(views.bp)
     # app.register_blueprint(module_blueprint, url_prefix='/module')
 
-    seed_cli = AppGroup('seed')
+    seed_cli = AppGroup('database')
+    generate_module = AppGroup("module")
 
     # Flask CLI command
-    @seed_cli.command('run')
+    @seed_cli.command('seed')
     @click.option('--replace', is_flag=True, help='Clear existing data before seeding.')
     def run_seed(replace):
         """
@@ -83,9 +84,9 @@ def create_app(config_class=Config):
         """
         seed_database(replace=replace)
 
-    app.cli.add_command(seed_cli)
-
-    generate_module = AppGroup("module")
+    @seed_cli.command('auto_discover')
+    def run_auto_load_models():
+        auto_load_models(installed_apps)
 
     @generate_module.command("generate")
     @click.option('--name', required=True, help="The desired name for the new module, used for the models file.")
@@ -101,6 +102,7 @@ def create_app(config_class=Config):
         """
         create_module(name)
 
+    app.cli.add_command(seed_cli)
     app.cli.add_command(generate_module)
 
     return app
@@ -118,6 +120,7 @@ def load_modules(app, installed_apps=[]):
                     importlib.reload(module)
             except Exception as e:
                 print(e)
+
     for module_name in os.listdir(modules_dir):
         module_path = os.path.join(modules_dir, module_name)
         with app.app_context():

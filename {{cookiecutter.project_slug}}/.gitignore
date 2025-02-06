@@ -274,5 +274,5 @@ dump.rdb
 .pytest_cache/
 
 src/modules/**
-src/modules/manager
+!src/modules/manager
 src/migrations/
