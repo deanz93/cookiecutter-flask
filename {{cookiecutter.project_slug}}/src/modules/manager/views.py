@@ -64,15 +64,20 @@ def install_module(zip_path):
                 log_action("Installed Module", module_name)
 
 
-def create_module(path, name):
+def create_module(name):
     """
     Create a new folder and files (__init__.py, urls.py, views.py),
     along with a models folder and a file in capitalized format.
     Usage:
         flask generate module --name ModuleName
     """
-    path = os.path.abspath(path)  # Convert to absolute path
-    module_name = name.capitalize()  # Ensure module name is capitalized
+    if not re.match(r'^[A-Z][a-z]*([A-Z][a-z]*)*$', name):
+        print(f"Error: '{name}' is not a valid module name. Please use a valid two-word CamelCase format, e.g. 'MyModule'.")
+        return
+    module_name = name
+    module_name_undescore = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    cur_dir = os.path.abspath(os.getcwd())
+    path = os.path.join(cur_dir, 'modules', module_name_undescore)
 
     # Ensure the main path exists or create it
     if os.path.exists(path):
@@ -115,7 +120,7 @@ def create_module(path, name):
                         "# Define your routes here\n"
                         "from flask import Blueprint, request, jsonify\n"
                         f"from {current_app.import_name}.extensions import swagger\n\n"
-                        f"{name.lower()}_bp = Blueprint('{name.lower()}', __name__)\n\n"
+                        f"{module_name_undescore}_bp = Blueprint('{module_name_undescore}', __name__, url_prefix='/{module_name_undescore}')\n\n"
                     )
                 elif file == "utils.py":
                     f.write("# Define your utility functions here\n")
@@ -136,7 +141,7 @@ def create_module(path, name):
                         "\n\n"
                         f"class {module_name}(Mixin, db.Model):\n"
                         "\n"
-                        f"    __tablename__ = '{module_name.lower()}_{name.lower()}'\n"
+                        f"    __tablename__ = '{module_name_undescore}'\n"
                         "\n"
                         "    id = db.Column(\n"
                         "        db.String(36),\n"
@@ -147,9 +152,9 @@ def create_module(path, name):
                 elif file == "modules.py":
                     f.write(
                         "# Register your blueprint here\n"
-                        f"from .urls import {name.lower()}_blueprint\n\n"
+                        f"from .urls import {module_name_undescore}_bp\n\n"
                         "def register():\n"
-                        f"    return {name.lower()}_blueprint\n"
+                        f"    return {module_name_undescore}_bp\n"
                     )
             print(f"File created: {file_path}")
         except Exception as e:
@@ -162,18 +167,18 @@ def create_module(path, name):
         print(f"Models directory created at: {models_folder}")
 
         # Create the models file with capitalized name
-        template_file_path = os.path.join(models_folder, f"{module_name.lower()}.html")
+        template_file_path = os.path.join(models_folder, f"{module_name_undescore}.html")
         with open(template_file_path, "w", encoding="utf-8") as f:
             f.write("<!DOCTYPE html>\n")
             f.write("<html lang='en'>\n")
             f.write("<head>\n")
             f.write("    <meta charset='UTF-8'>\n")
             f.write("    <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
-            f.write("    <title>{}</title>\n".format(module_name.lower()))
+            f.write("    <title>{}</title>\n".format(module_name_undescore))
             f.write("</head>\n")
             f.write("<body>\n")
-            f.write("    <h1>{}</h1>\n".format(module_name.lower()))
-            f.write("    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>\n")
+            f.write("    <h1>{}</h1>\n".format(module_name_undescore))
+            f.write("    <p>This is example texts.</p>\n")
             f.write("</body>\n")
             f.write("</html>\n")
         print(f"Models file created: {template_file_path}")

@@ -80,7 +80,6 @@ def create_app(config_class=Config):
     generate_module = AppGroup("module")
 
     @generate_module.command("generate")
-    # @click.option('--path', required=True, help="The directory path where the new module will be created.")
     @click.option('--name', required=True, help="The desired name for the new module, used for the models file.")
     def generate_new_module(name):
         """
@@ -92,9 +91,7 @@ def create_app(config_class=Config):
         Returns:
             None
         """
-        path = os.path.abspath(os.getcwd())
-        path_to_module = os.path.join(path, 'modules', name)
-        create_module(path_to_module, name)
+        create_module(name)
 
     app.cli.add_command(generate_module)
 
