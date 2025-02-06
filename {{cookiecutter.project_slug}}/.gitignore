@@ -273,6 +273,7 @@ dump.rdb
 
 .pytest_cache/
 
-src/modules/**
+src/modules/*
 !src/modules/manager
+!src/modules/users
 src/migrations/
