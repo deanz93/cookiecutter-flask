@@ -67,7 +67,7 @@ def create_app(config_class=Config):
     {% if cookiecutter.authentication_type == "Firebase" %}firebase.init_app(app){% endif %}
 
     app.register_blueprint(views.bp)
-    app.register_blueprint(module_blueprint, url_prefix='/module')
+    # app.register_blueprint(module_blueprint, url_prefix='/module')
 
     seed_cli = AppGroup('seed')
 

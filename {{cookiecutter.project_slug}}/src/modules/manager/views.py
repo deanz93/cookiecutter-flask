@@ -82,7 +82,7 @@ def load_fixtures(module_path):
 
 
 def install_module(zip_path):
-    from {{cookiecutter.project_slug}}.utils
+    from {{cookiecutter.project_slug}}.utils import log_action
     """
     Install a module from a zip file.
 
@@ -90,7 +90,6 @@ def install_module(zip_path):
 
     :returns: None
     """
-    import log_action
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
