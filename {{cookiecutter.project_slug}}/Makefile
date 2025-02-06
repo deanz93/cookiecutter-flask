@@ -33,3 +33,7 @@ migrate.upgrade:
 
 db.seed:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py seed run
+
+module.create:
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py module generate --name $(module)
+	#"Example: make module.create module=MyModule"
