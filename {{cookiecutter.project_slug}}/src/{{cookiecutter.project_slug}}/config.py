@@ -55,9 +55,28 @@ class Config:
 {% endif %}
 {% if cookiecutter.use_swagger == 'y' %}
     SWAGGER = {
-        'title': '{{ cookiecutter.project_name }} API',
-        'uiversion': 3,
-        'openapi': '3.0.2'
+        "openapi": "3.0.2",
+        "info": {
+            'title': '{{ cookiecutter.project_name }} API',
+            "version": "1.0.0",
+        },
+        "components": {
+            "securitySchemes": {
+                "BasicAuth": {
+                    "type": "http",
+                    "scheme": "basic"
+                },
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT"  # Optional but helps with UI clarity
+                }
+            }
+        },
+        "security": [
+            {"BasicAuth": []},
+            {"BearerAuth": []}
+        ]
     }{% endif %}
 
     # Timezone Settings
