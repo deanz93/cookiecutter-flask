@@ -1,3 +1,9 @@
+"""
+This module provides a blueprint for managing modules.
+
+It provides a web interface for managing (enabling/disabling) and installing modules.
+"""
+
 import os
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
@@ -6,12 +12,17 @@ from .models import Module, Log
 from .views import enable_module, disable_module, install_module
 
 
-module_blueprint = Blueprint('module', __name__, template_folder='templates')
+module_blueprint = Blueprint('module', __name__, template_folder='templates', url_prefix='/module')
 
 
 # Admin panel
 @module_blueprint.route('/manager/', methods=['GET', 'POST'])
 def admin():
+    """
+    The admin panel for managing modules.
+
+    Provides a web interface for managing (enabling/disabling) and installing modules.
+    """
     if request.method == 'POST':
         action = request.form.get('action')
         module_name = request.form.get('module')
