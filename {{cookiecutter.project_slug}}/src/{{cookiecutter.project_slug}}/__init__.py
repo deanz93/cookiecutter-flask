@@ -39,6 +39,14 @@ def create_app(config_class=Config):
         print("db not exist. Creating..")
         create_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
+    # Inpired from Django's installed_apps. Register when you develop a new module
+    # Uploaded modules don't need to be registered here; they will be loaded automatically when enabled in the manager.
+    installed_apps = [
+        'manager',
+    ]
+
+    load_modules(app, installed_apps)
+
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
     os.makedirs(app.config['STATIC_PATH'], exist_ok=True)
@@ -98,9 +106,18 @@ def create_app(config_class=Config):
     return app
 
 
-def load_modules(app):
+def load_modules(app, installed_apps=[]):
     modules_dir = 'modules'
 
+    if len(installed_apps) > 0:
+        for module_name in installed_apps:
+            try:
+                module = importlib.import_module(f'modules.{module_name}.modules')
+                if hasattr(module, 'register'):
+                    app.register_blueprint(module.register())
+                    importlib.reload(module)
+            except Exception as e:
+                print(e)
     for module_name in os.listdir(modules_dir):
         module_path = os.path.join(modules_dir, module_name)
         with app.app_context():
