@@ -1,6 +1,17 @@
+"""
+This module provides endpoints for enabling and disabling modules.
+
+Endpoints:
+    - /modules/enable/<string:module_name>: Enable a module.
+    - /modules/disable/<string:module_name>: Disable a module.
+
+Imports:
+    - importlib: A module for importing other modules.
+"""
 import importlib
 import json
 import os
+import re
 import shutil
 import zipfile
 
@@ -13,6 +24,13 @@ from .models import Module
 
 def enable_module(module_name):
     from {{cookiecutter.project_slug}}.utils import log_action
+    """
+    Enable a module.
+
+    :param module_name: The name of the module to enable.
+
+    :returns: A message indicating that the server is restarting.
+    """
     module_entry = Module.query.filter_by(name=module_name).first()
 
     if module_entry and not module_entry.enabled:
@@ -25,6 +43,14 @@ def enable_module(module_name):
 
 def disable_module(module_name):
     from {{cookiecutter.project_slug}}.utils import log_action
+    """
+    Disable a module.
+
+    :param module_name: The name of the module to disable.
+
+    :returns: None
+    """
+
     module_entry = Module.query.filter_by(name=module_name).first()
     if module_entry and module_entry.enabled:
         rules_to_remove = [rule for rule in current_app.url_map.iter_rules() if rule.endpoint.startswith(module_name)]
@@ -37,6 +63,13 @@ def disable_module(module_name):
 
 
 def load_fixtures(module_path):
+    """
+    Load fixtures from a module's fixtures.json file into the database.
+
+    :param module_path: The path to the module directory.
+
+    :returns: None
+    """
     fixtures_path = os.path.join(module_path, 'fixtures.json')
     if os.path.exists(fixtures_path):
         with open(fixtures_path) as f:
@@ -49,7 +82,15 @@ def load_fixtures(module_path):
 
 
 def install_module(zip_path):
-    from {{cookiecutter.project_slug}}.utils import log_action
+    from {{cookiecutter.project_slug}}.utils
+    """
+    Install a module from a zip file.
+
+    :param zip_path: The path to the zip file containing the module.
+
+    :returns: None
+    """
+    import log_action
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
@@ -66,11 +107,21 @@ def install_module(zip_path):
 
 def create_module(name):
     """
-    Create a new folder and files (__init__.py, urls.py, views.py),
-    along with a models folder and a file in capitalized format.
+    Create a new module with the specified name.
+
+    This function validates the module name, creates a directory and necessary
+    boilerplate files for a new module, and sets up the module structure.
+
+    Args:
+        name (str): The name of the module in CamelCase format.
+
+    Returns:
+        None
+
     Usage:
         flask generate module --name ModuleName
     """
+
     if not re.match(r'^[A-Z][a-z]*([A-Z][a-z]*)*$', name):
         print(f"Error: '{name}' is not a valid module name. Please use a valid two-word CamelCase format, e.g. 'MyModule'.")
         return
