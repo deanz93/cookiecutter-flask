@@ -33,7 +33,6 @@ def create_app(config_class=Config):
     app.config.from_pyfile('config.py', silent=True)
 
     db.init_app(app)
-    load_modules(app)
 
     if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
         print("db not exist. Creating..")
