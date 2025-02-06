@@ -53,6 +53,7 @@ def check_s3():
 {% if cookiecutter.authentication_type == 'Firebase' %}@firebase_auth_required{% endif %}
 {% if cookiecutter.use_swagger == 'y' %}@swag_from({
     'responses': {
+        'security': [{'BearerAuth': []}],
         200: {
             'description': 'List of routes',
             'content': {
