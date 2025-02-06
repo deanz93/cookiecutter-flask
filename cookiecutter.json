@@ -8,7 +8,7 @@
   "author_name": "Najmuddin",
   "domain_name": "example.com",
   "admin_email": "{{ cookiecutter.author_name.lower() | trim() |replace(' ', '-') }}@{{ cookiecutter.domain_name.lower() | trim() }}",
-  "authentication_type": ["Firebase", "flask"],
+  "authentication_type": ["Firebase"],
   "open_source_license": [
     "MIT",
     "BSD",
