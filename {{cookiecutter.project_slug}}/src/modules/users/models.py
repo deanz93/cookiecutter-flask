@@ -1,12 +1,9 @@
-"""
-Module containing the User, Organization model.
-"""
 import uuid
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash
 
 from database.core import Mixin
-from {{ cookiecutterproject_slug }}.extensions import db
+from {{ cookiecutter.project_slug }}.extensions import db
 
 
 class User(Mixin, db.Model):

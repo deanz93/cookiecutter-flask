@@ -1,67 +1,54 @@
 """
-Module with endpoints for user authentication
+This module provides endpoints for user authentication.
 
 Endpoints:
-
     - /signin: Sign in and return a JWT token.
 
 Imports:
-
     - flask: A web framework for Python.
     - flasgger: A library for generating Swagger documentation.
 """
+
 from flasgger import swag_from
 from flask import Blueprint, request, jsonify
 from modules.users.models import User
+from modules.users.views import create_user
 
 
-users_blueprint = Blueprint('users', __name__, template_folder='templates', url_prefix='/users')
+users_blueprint = Blueprint(
+    "users", __name__, template_folder="templates", url_prefix="/users"
+)
 
 
-@users_blueprint.route('/signin/', methods=['POST'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        200: {
-            'description': 'Sign in successful'
+@users_blueprint.route("/signin/", methods=["POST"])
+@swag_from(
+    {
+        "tags": ["users"],
+        "responses": {
+            200: {"description": "Sign in successful"},
+            401: {"description": "Invalid username or password or user is disabled"},
         },
-        401: {
-            'description': 'Invalid username or password or user is disabled'
-        }
-    },
-    'parameters': [
-        {
-            'name': 'username',
-            'in': 'json',
-            'required': True,
-            'type': 'string',
-            'description': 'Username of the user'
-        },
-        {
-            'name': 'password',
-            'in': 'json',
-            'required': True,
-            'type': 'string',
-            'description': 'Password of the user'
-        }
-    ]
-})
+        "parameters": [
+            {
+                "name": "username",
+                "in": "json",
+                "required": True,
+                "type": "string",
+                "description": "Username of the user",
+            },
+            {
+                "name": "password",
+                "in": "json",
+                "required": True,
+                "type": "string",
+                "description": "Password of the user",
+            },
+        ],
+    }
+)
 def signin():
-    """
-    Sign in with a username and password.
-
-    Args:
-        username (str): Username of the user.
-        password (str): Password of the user.
-
-    Returns:
-        dict: A dict with a message indicating whether the sign in was successful or not.
-
-    Raises:
-        401: If the username or password is invalid or the user is disabled.
-    """
-    username = request.json.get('username')
-    password = request.json.get('password')
+    username = request.json.get("username")
+    password = request.json.get("password")
     user = User.query.filter_by(username=username).first()
     if user and user.check_password(password):
         # Check if the user is enabled
@@ -73,107 +60,112 @@ def signin():
         return jsonify({"message": "Invalid username or password."}), 401
 
 
-@users_blueprint.route('/register/', methods=['POST'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        201: {
-            'description': 'User registered successfully'
-        },
-        400: {
-            'description': 'Username and password are required'
-        },
-        500: {
-            'description': 'An error occurred during registration'
-        }
-    },
-    'parameters': [
-        {
-            'name': 'username',
-            'in': 'json',
-            'required': True,
-            'type': 'string',
-            'description': 'Username of the user'
-        },
-        {
-            'name': 'password',
-            'in': 'json',
-            'required': True,
-            'type': 'string',
-            'description': 'Password of the user'
-        }
-    ]
-})
+@users_blueprint.route("/register/", methods=["POST"])
 def register_user():
     """
-    Register a new user.
-
-    Args:
-        username (str): Username of the user.
-        password (str): Password of the user.
-
-    Returns:
-        dict: A dict with a message indicating whether the registration was successful or not.
-
-    Raises:
-        400: If the username and password are not provided.
-        500: If an error occurred during registration.
+    Echo back the name and any posted parameters.
+    ---
+    tags:
+      - users
+    consumes:
+        - application/json
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                description: First name.
+                example: Alice
+              last_name:
+                type: string
+                description: Last name.
+                example: Smith
+              email:
+                type: string
+                format: email
+                description: Email address.
+                example: alice@example.com
+              picture:
+                type: string
+                description: Profile picture URL.
+                example: https://example.com/alice.jpg
+              password:
+                type: string
+                description: Password.
+                example: secret
+              date_of_birth:
+                type: string
+                format: date
+                description: Date of birth.
+                example: 1990-01-01
+              phone_number:
+                type: string
+                description: Phone number.
+                example: +123456789
+              signed_in_provider:
+                type: string
+                description: Signed-in provider.
+                example: google
+    responses:
+      200:
+        description: OK.
+    responses:
+      200:
+        description: OK.
     """
-    username = request.json.get('username')
-    password = request.json.get('password')
+    first_name = request.json.get("first_name")
+    last_name = request.json.get("last_name")
+    email = request.json.get("email")
+    picture = request.json.get("picture")
+    password = request.json.get("password")
+    date_of_birth = request.json.get("date_of_birth")
+    phone_number = request.json.get("phone_number")
+    signed_in_provider = request.json.get("signed_in_provider")
 
-    if not username or not password:
-        return jsonify({"message": "Username and password are required."}), 400
+    if not (
+        password
+        and first_name
+        and last_name
+        and email
+        and date_of_birth
+        and phone_number
+        and signed_in_provider
+        and picture
+    ):
+        return jsonify({"message": "All fields are required."}), 400
 
-    user = User(username=username, password=password)
+    result = create_user(first_name, last_name, email, picture, password,
+                         date_of_birth, phone_number, signed_in_provider)
 
-    try:
-        user.save()
-        return jsonify({"message": f"User {username} registered successfully."}), 201
-    except Exception as e:
-        return jsonify({"message": "An error occurred during registration."}), 500
+    return jsonify(result), result['code']
 
 
-@users_blueprint.route('/enable/', methods=['POST'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        404: {
-            'description': 'User not found'
+@users_blueprint.route("/enable/", methods=["POST"])
+@swag_from(
+    {
+        "tags": ["users"],
+        "responses": {
+            404: {"description": "User not found"},
+            200: {"description": "User enabled successfully"},
+            500: {"description": "An error occurred during enabling"},
         },
-        200: {
-            'description': 'User enabled successfully'
-        },
-        500: {
-            'description': 'An error occurred during enabling'
-        }
-    },
-    'parameters': [
-        {
-            'name': 'id',
-            'in': 'json',
-            'required': True,
-            'type': 'integer',
-            'description': 'Id of the user'
-        }
-    ]
-})
+        "parameters": [
+            {
+                "name": "id",
+                "in": "json",
+                "required": True,
+                "type": "integer",
+                "description": "Id of the user",
+            }
+        ],
+    }
+)
 def enable_user():
-    """
-    Enable a user.
-
-    Args:
-        id (int): Id of the user to be enabled.
-
-    Returns:
-        dict: A dict with a message indicating whether the user was enabled successfully or not.
-
-    Raises:
-        404: If the user is not found.
-        200: If the user is already enabled.
-        500: If an error occurred during enabling.
-    """
-    user_id = request.json.get('id')
+    user_id = request.json.get("id")
     user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found."}), 404
@@ -186,46 +178,28 @@ def enable_user():
     return jsonify({"message": f"User {user.email} enabled successfully."}), 200
 
 
-@users_blueprint.route('/disable/', methods=['POST'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        404: {
-            'description': 'User not found'
+@users_blueprint.route("/disable/", methods=["POST"])
+@swag_from(
+    {
+        "tags": ["users"],
+        "responses": {
+            404: {"description": "User not found"},
+            200: {"description": "User disabled successfully"},
+            500: {"description": "An error occurred during disabling"},
         },
-        200: {
-            'description': 'User disabled successfully'
-        },
-        500: {
-            'description': 'An error occurred during disabling'
-        }
-    },
-    'parameters': [
-        {
-            'name': 'id',
-            'in': 'json',
-            'required': True,
-            'type': 'integer',
-            'description': 'Id of the user'
-        }
-    ]
-})
+        "parameters": [
+            {
+                "name": "id",
+                "in": "json",
+                "required": True,
+                "type": "integer",
+                "description": "Id of the user",
+            }
+        ],
+    }
+)
 def disable_user():
-    """
-    Disable a user.
-
-    Args:
-        id (int): Id of the user to be disabled.
-
-    Returns:
-        dict: A dict with a message indicating whether the user was disabled successfully or not.
-
-    Raises:
-        404: If the user is not found.
-        200: If the user is already disabled.
-        500: If an error occurred during disabling.
-    """
-    user_id = request.json.get('id')
+    user_id = request.json.get("id")
     user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found."}), 404
@@ -238,47 +212,28 @@ def disable_user():
     return jsonify({"message": f"User {user.email} disabled successfully."}), 200
 
 
-@users_blueprint.route('/delete/', methods=['DELETE'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        404: {
-            'description': 'User not found'
+@users_blueprint.route("/delete/", methods=["DELETE"])
+@swag_from(
+    {
+        "tags": ["users"],
+        "responses": {
+            404: {"description": "User not found"},
+            200: {"description": "User deleted successfully"},
+            500: {"description": "An error occurred during deletion"},
         },
-        200: {
-            'description': 'User deleted successfully'
-        },
-        500: {
-            'description': 'An error occurred during deletion'
-        }
-    },
-    'parameters': [
-        {
-            'name': 'id',
-            'in': 'query',
-            'required': True,
-            'type': 'integer',
-            'description': 'Id of the user'
-        }
-    ]
-})
+        "parameters": [
+            {
+                "name": "id",
+                "in": "query",
+                "required": True,
+                "type": "integer",
+                "description": "Id of the user",
+            }
+        ],
+    }
+)
 def delete_user():
-    """
-    Delete a user.
-
-    Args:
-        id (int): Id of the user to be deleted, passed as a query parameter.
-
-    Returns:
-        dict: A dict with a message indicating whether the user was deleted successfully or not.
-
-    Raises:
-        404: If the user is not found.
-        200: If the user is deleted successfully.
-        500: If an error occurred during deletion.
-    """
-
-    user_id = request.args.get('id')
+    user_id = request.args.get("id")
     user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found."}), 404
@@ -290,60 +245,38 @@ def delete_user():
         return jsonify({"message": "An error occurred during deletion."}), 500
 
 
-@users_blueprint.route('/all/', methods=['GET'])
-@swag_from({
-    'tags': ['users'],
-    'responses': {
-        200: {
-            'description': 'All users fetched successfully',
-            'schema': {
-                'type': 'array',
-                'items': {
-                    'type': 'object',
-                    'properties': {
-                        '_id': {'type': 'string'},
-                        'active': {'type': 'boolean'},
-                        'created_at': {'type': 'string', 'format': 'date-time'},
-                        'date_joined': {'type': 'string', 'format': 'date-time'},
-                        'date_of_birth': {'type': 'string', 'format': 'date'},
-                        'email': {'type': 'string'},
-                        'first_name': {'type': 'string'},
-                        'last_name': {'type': 'string'},
-                        'password': {'type': 'string'},
-                        'phone_number': {'type': 'string'},
-                        'picture': {'type': 'string'},
-                        'signed_in_provider': {'type': 'string'},
-                        'updated_at': {'type': 'string', 'format': 'date-time'}
-                    }}
+@users_blueprint.route("/all/", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["users"],
+        "responses": {
+            200: {
+                "description": "All users fetched successfully",
+                "schema": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "_id": {"type": "string"},
+                            "active": {"type": "boolean"},
+                            "created_at": {"type": "string", "format": "date-time"},
+                            "date_joined": {"type": "string", "format": "date-time"},
+                            "date_of_birth": {"type": "string", "format": "date"},
+                            "email": {"type": "string"},
+                            "first_name": {"type": "string"},
+                            "last_name": {"type": "string"},
+                            "password": {"type": "string"},
+                            "phone_number": {"type": "string"},
+                            "picture": {"type": "string"},
+                            "signed_in_provider": {"type": "string"},
+                            "updated_at": {"type": "string", "format": "date-time"},
+                        },
+                    },
+                },
             }
-        }
+        },
     }
-})
+)
 def get_all_users():
-    """
-    Get all users.
-
-    Returns:
-        list: A list of all users with their fields as a dict.
-
-    Example response:
-        [
-            {
-                "_id": "5f5f2a1a1a1a1a1a1a1a",
-                "active": true,
-                "created_at": "2020-09-15T14:30:00.000Z",
-                "date_joined": "2020-09-15T14:30:00.000Z",
-                "date_of_birth": "1990-01-01",
-                "email": "user@example.com",
-                "first_name": "John",
-                "last_name": "Doe",
-                "password": "hashedpassword",
-                "phone_number": "+1234567890",
-                "picture": "https://example.com/picture.jpg",
-                "signed_in_provider": "google",
-                "updated_at": "2020-09-15T14:30:00.000Z"
-            }
-        ]
-    """
     users = User.query.all()
     return jsonify([user.to_dict() for user in users]), 200

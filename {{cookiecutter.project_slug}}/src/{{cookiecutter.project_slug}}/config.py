@@ -5,7 +5,7 @@ import ast
 import os
 import pytz
 {% if cookiecutter.use_swagger == 'y' %}
-from aa.extensions.flasgger import requires_basic_auth, requires_bearer_auth
+from {{ cookiecutter.project_slug }}.extensions.flasgger import requires_basic_auth, requires_bearer_auth
 {% endif %}
 
 class Config:

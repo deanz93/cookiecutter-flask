@@ -1,0 +1,17 @@
+Hello from {app_name}!
+
+You are receiving this email because you or someone else tried to signup for
+an account using email address:
+
+{email}
+
+However, an account using that email address already exists.  In case you have
+forgotten about this, please use the password forgotten procedure to recover
+your account
+
+Please do not reply to this email as it is automatically generated.
+
+Thanks.
+{app_name} Administrator.
+
+Thank you for using {app_name}
