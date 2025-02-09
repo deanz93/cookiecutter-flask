@@ -4,7 +4,9 @@ Instance-specific configurations for the Flask application.
 import ast
 import os
 import pytz
-
+{% if cookiecutter.use_swagger == 'y' %}
+from aa.extensions.flasgger import requires_basic_auth, requires_bearer_auth
+{% endif %}
 
 class Config:
     """
@@ -79,8 +81,8 @@ class Config:
             }
         },
         "security": [
-            {"BasicAuth": []},
-            {"BearerAuth": []}
+            {"BasicAuth": [requires_basic_auth]},
+            {"BearerAuth": [requires_bearer_auth]}
         ]
     }{% endif %}
 
