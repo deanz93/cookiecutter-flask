@@ -41,8 +41,8 @@ def create_app(config_class=Config):
     # Inpired from Django's installed_apps. Register when you develop a new module
     # Uploaded modules don't need to be registered here; they will be loaded automatically when enabled in the manager.
     installed_apps = [
-        'users',
         'manager',
+        'users',
     ]
 
     load_modules(app, installed_apps)
