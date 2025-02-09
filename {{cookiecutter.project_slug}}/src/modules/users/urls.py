@@ -111,11 +111,14 @@ def register_user():
                 description: Signed-in provider.
                 example: google
     responses:
-      200:
-        description: OK.
-    responses:
-      200:
-        description: OK.
+        200:
+            description: OK, but User not created.
+        201:
+            description: User Created.
+        400:
+            description: All fields are required.
+        500:
+            description: Error creating new user
     """
     first_name = request.json.get("first_name")
     last_name = request.json.get("last_name")
