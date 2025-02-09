@@ -63,7 +63,7 @@ def signin():
 @users_blueprint.route("/register/", methods=["POST"])
 def register_user():
     """
-    Echo back the name and any posted parameters.
+    Register new user
     ---
     tags:
       - users
@@ -138,10 +138,18 @@ def register_user():
     ):
         return jsonify({"message": "All fields are required."}), 400
 
-    result = create_user(first_name, last_name, email, picture, password,
-                         date_of_birth, phone_number, signed_in_provider)
+    result = create_user(
+        first_name,
+        last_name,
+        email,
+        picture,
+        password,
+        date_of_birth,
+        phone_number,
+        signed_in_provider,
+    )
 
-    return jsonify(result), result['code']
+    return jsonify(result), result["code"]
 
 
 @users_blueprint.route("/enable/", methods=["POST"])
