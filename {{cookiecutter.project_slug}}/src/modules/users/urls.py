@@ -21,43 +21,50 @@ users_blueprint = Blueprint(
 
 
 @users_blueprint.route("/signin/", methods=["POST"])
-@swag_from(
-    {
-        "tags": ["users"],
-        "responses": {
-            200: {"description": "Sign in successful"},
-            401: {"description": "Invalid username or password or user is disabled"},
-        },
-        "parameters": [
-            {
-                "name": "username",
-                "in": "json",
-                "required": True,
-                "type": "string",
-                "description": "Username of the user",
-            },
-            {
-                "name": "password",
-                "in": "json",
-                "required": True,
-                "type": "string",
-                "description": "Password of the user",
-            },
-        ],
-    }
-)
 def signin():
-    username = request.json.get("username")
-    password = request.json.get("password")
-    user = User.query.filter_by(username=username).first()
+    """
+    Sign in
+    ---
+    tags:
+      - users
+    consumes:
+        - application/json
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: Email address.
+                example: alice@example.com
+              password:
+                type: string
+                description: Password.
+                example: secret
+    responses:
+        200:
+            description: OK.
+        401:
+            description: User is not able to sign in.
+    """
+    email = request.json.get("email").strip()
+    password = request.json.get("password").strip()
+
+    user = User.query.filter_by(email=email).first()
+
     if user and user.check_password(password):
         # Check if the user is enabled
-        if user.enabled:
-            return jsonify({"message": f"User {username} signed in successfully."}), 200
+        if user.active:
+            return jsonify(
+                {"message": f"User {email} signed in successfully."}), 200
         else:
             return jsonify({"message": "User is disabled."}), 401
     else:
-        return jsonify({"message": "Invalid username or password."}), 401
+        return jsonify({"message": "Invalid email or password."}), 401
 
 
 @users_blueprint.route("/register/", methods=["POST"])

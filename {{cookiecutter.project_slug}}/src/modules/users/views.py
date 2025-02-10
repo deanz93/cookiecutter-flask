@@ -72,6 +72,7 @@ def create_user(first_name, last_name, email, picture, password, date_of_birth, 
         signed_in_provider=signed_in_provider,
         picture=picture,
     )
+    user.set_password(password)
 
     try:
         user.save()
