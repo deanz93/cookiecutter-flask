@@ -12,12 +12,12 @@ from .models import Module, Log
 from .views import enable_module, disable_module, install_module
 
 
-module_blueprint = Blueprint('module', __name__, template_folder='templates', url_prefix='/module')
+module_blueprint = Blueprint('modules', __name__, template_folder='templates', url_prefix='/modules')
 
 
 # Admin panel
 @module_blueprint.route('/manager/', methods=['GET', 'POST'])
-def admin():
+def module():
     """
     The admin panel for managing modules.
 
