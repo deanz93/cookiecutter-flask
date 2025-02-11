@@ -31,6 +31,15 @@ class Config:
     S3_REGION = os.getenv("S3_REGION")
     S3_BUCKET = os.getenv("S3_BUCKET")
 {% endif %}
+    # JWT conf
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    SESSION_TYPE = os.getenv("SESSION_TYPE")
+    SESSION_PERMANENT = ast.literal_eval(
+        os.getenv("SESSION_PERMANENT"))
+    SESSION_USE_SIGNER = ast.literal_eval(
+        os.getenv("SESSION_USE_SIGNER"))
+    SESSION_KEY_PREFIX = os.getenv("SESSION_KEY_PREFIX")
+
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///default.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
