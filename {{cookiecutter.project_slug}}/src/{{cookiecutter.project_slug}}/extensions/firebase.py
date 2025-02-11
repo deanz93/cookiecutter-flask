@@ -79,6 +79,8 @@ class Firebase(object):
         except Exception as e:
             with app.app_context():
                 current_app.logger.error(f"\033[93mFailed to initialize Firebase client.{e}\033[0m ")
+        finally:
+            print('Firebase initialized.')
 
 
 def firebase_auth_required(func):

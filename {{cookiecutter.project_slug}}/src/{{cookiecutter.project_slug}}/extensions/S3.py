@@ -86,6 +86,9 @@ class S3Storage(object):
         except Exception as e:
             with app.app_context():
                 current_app.logger.error(f"\033[93mFailed to initialize S3 client. {e}\033[0m ")
+        finally:
+            print('S3 client initialized.')
+
 
     def upload_file(self, file_path, s3_key):
         """
