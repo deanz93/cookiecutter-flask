@@ -9,6 +9,7 @@ It follows the Flask application factory pattern to prevent circular dependencie
 # to prevent circular dependencies
 
 from modules.manager.models import Module, Log
+from modules.users.models import Organization, User
 from {{cookiecutter.project_slug}}.extensions import db
 
-__all__ = ['db', 'Module', 'Log']
+__all__ = ['db', 'User', 'Organization', 'Module', 'Log']

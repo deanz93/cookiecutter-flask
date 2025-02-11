@@ -40,4 +40,4 @@ class Log(Mixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=func.now())
-    module_name = db.Column(db.String(50))
+    module_id = db.Column(db.String(36), db.ForeignKey('general_modules.id'), nullable=False)
