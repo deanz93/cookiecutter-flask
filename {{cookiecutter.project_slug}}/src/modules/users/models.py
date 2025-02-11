@@ -25,6 +25,8 @@ class User(Mixin, db.Model):
     picture = db.Column(db.String(255))
     password = db.Column(db.String(255), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
+    is_admin = db.Column(db.Boolean, default=True, nullable=False)
+    is_super_admin = db.Column(db.Boolean, default=True, nullable=False)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     date_joined = db.Column(db.DateTime, default=func.now(), nullable=False)
     active = db.Column(db.Boolean, default=True, nullable=False)
@@ -33,10 +35,12 @@ class User(Mixin, db.Model):
     updated_at = db.Column(db.DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
     def __init__(self, active, first_name, last_name, email, password, date_of_birth, phone_number,
-                 signed_in_provider, picture=None):
+                 signed_in_provider, is_admin, is_super_admin, picture=None):
         self.first_name = first_name
         self.last_name = last_name
         self.active = active
+        self.is_admin = is_admin
+        self.is_super_admin = is_super_admin
         self.email = email
         self.set_password(password)
         self.date_of_birth = date_of_birth

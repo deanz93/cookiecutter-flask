@@ -71,6 +71,8 @@ def create_user(first_name, last_name, email, picture, password, date_of_birth, 
         phone_number=phone_number,
         signed_in_provider=signed_in_provider,
         picture=picture,
+        is_admin=False,
+        is_super_admin=False
     )
     user.set_password(password)
 
