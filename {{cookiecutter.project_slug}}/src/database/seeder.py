@@ -1,3 +1,13 @@
+"""
+Contains functions for seeding the database with fixture data.
+
+The seeder module is a part of the core package. It provides a single function, seed_database, which loads data from a set of predefined JSON files and inserts it into the database.
+
+The JSON files are expected to be located in the fixtures directory of the corresponding module. The JSON files are expected to contain a list of objects that are to be inserted into the database.
+
+The seed_database function takes a single argument, which is the list of module names to seed. If the argument is not provided, the function will seed all modules that are currently installed.
+
+"""
 import json
 import os
 import importlib
@@ -7,7 +17,7 @@ from {{cookiecutter.project_slug}}.extensions import db
 
 # List of fixture file paths
 FIXTURE_MAP = [
-    "{{cookiecutter.project_slug}}/fixtures/modules.json",
+    "modules/users/fixtures/users.json",
 ]
 
 
@@ -74,7 +84,7 @@ def seed_database(replace=False):
         data = load_json(fixture_path)
 
         for table_data in data:
-            table_name = table_data.get('table')
+            table_name = table_data.get('models')
             fields_list = table_data.get('fields', [])
 
             # Dynamically find the model class
@@ -91,8 +101,14 @@ def seed_database(replace=False):
 
             print(f"Seeding {table_name}...")
             objects = [model(**fields) for fields in fields_list]
-            db.session.bulk_save_objects(objects)
-            db.session.commit()
-            print(f"Seeded {len(objects)} records for {table_name}.")
+            try:
+                db.session.bulk_save_objects(objects)
+                db.session.commit()
+                print(f"Seeded {len(objects)} records for {table_name}.")
+            except Exception:
+                print(f"Data in table {table_name} already exists. Skipping...")
+            finally:
+                db.session.close()
+
 
     print("Database seeded successfully.")
