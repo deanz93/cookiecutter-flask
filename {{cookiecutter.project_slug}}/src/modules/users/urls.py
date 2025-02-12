@@ -15,7 +15,7 @@ from flask import Blueprint, request, render_template, jsonify, redirect, sessio
 from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, unset_jwt_cookies
 from flask_login import login_user, logout_user
 
-from {{ cookicutter.project_slug }}.extensions import login_manager
+from {{ cookiecutter.project_slug }}.extensions import login_manager
 from modules.users.models import User
 from modules.users.views import create_user
 
