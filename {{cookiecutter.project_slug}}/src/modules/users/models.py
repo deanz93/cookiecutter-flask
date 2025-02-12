@@ -34,19 +34,24 @@ class User(Mixin, db.Model):
     created_at = db.Column(db.DateTime, default=func.now(), nullable=False)
     updated_at = db.Column(db.DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
-    def __init__(self, active, first_name, last_name, email, password, date_of_birth, phone_number,
-                 signed_in_provider, is_admin, is_super_admin, picture=None):
-        self.first_name = first_name
-        self.last_name = last_name
+    def __init__(self, active, display_name, email, signed_in_provider,
+                 is_admin, is_super_admin, date_joined, password=None,
+                 picture=None, date_of_birth=None, phone_number=None,
+                 user_id=None):
+        if user_id:
+            self.id = user_id
+        self.display_name = display_name
         self.active = active
         self.is_admin = is_admin
         self.is_super_admin = is_super_admin
         self.email = email
-        self.set_password(password)
         self.date_of_birth = date_of_birth
         self.phone_number = phone_number
         self.signed_in_provider = signed_in_provider
+        self.date_joined = date_joined
         self.picture = picture
+        if password:
+            self.set_password(password)
 
     def save(self):
         """Save the user instance to the database."""
