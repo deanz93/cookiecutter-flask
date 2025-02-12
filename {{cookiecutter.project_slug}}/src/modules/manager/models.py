@@ -6,6 +6,7 @@ The models defined here include:
 - Log: Represents a log entry with details about events or actions.
 """
 
+import uuid
 from sqlalchemy.sql import func
 
 from database.core import Mixin
@@ -20,7 +21,7 @@ class Module(Mixin, db.Model):
     """
     __tablename__ = "general_modules"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(50), unique=True, nullable=False)
     version = db.Column(db.String(20), default='1.0.0')  # Versioning
     enabled = db.Column(db.Boolean, default=False)
@@ -37,7 +38,7 @@ class Log(Mixin, db.Model):
     """
     __tablename__ = "general_modules_logs"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     action = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=func.now())
     module_id = db.Column(db.String(36), db.ForeignKey('general_modules.id'), nullable=False)
