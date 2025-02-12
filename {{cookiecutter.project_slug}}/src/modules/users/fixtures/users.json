@@ -1,0 +1,18 @@
+[
+    {
+        "models": "User",
+        "fields": [
+            {
+                "id": "80622c69-cca0-4876-83b9-85b081363830",
+                "display_name": "Smart ETL Super Admin",
+                "email": "admin@admin.com",
+                "password": "adminPassword",
+                "date_joined": "2025-01-01",
+                "active": true,
+                "signed_in_provider": "password",
+                "is_admin": true,
+                "is_super_admin": true
+            }
+        ]
+    }
+]
