@@ -1,12 +1,10 @@
 """
-This module provides endpoints for enabling and disabling modules.
+This module provides functions for creating a new module and registering a subscription.
 
-Endpoints:
-    - /modules/enable/<string:module_name>: Enable a module.
-    - /modules/disable/<string:module_name>: Disable a module.
+The create_module function creates a new module and sends a registration email. If the module
+already exists, it sends the module a reminder email instead.
 
-Imports:
-    - importlib: A module for importing other modules.
+The register_subscription function registers a new subscription in the database.
 """
 import importlib
 import json
@@ -23,7 +21,6 @@ from .models import Module
 
 
 def enable_module(module_name):
-    from {{cookiecutter.project_slug}}.utils import log_action
     """
     Enable a module.
 
@@ -31,6 +28,8 @@ def enable_module(module_name):
 
     :returns: A message indicating that the server is restarting.
     """
+    from {{cookiecutter.project_slug}}.utils import log_action
+
     module_entry = Module.query.filter_by(name=module_name).first()
 
     if module_entry and not module_entry.enabled:
@@ -42,7 +41,6 @@ def enable_module(module_name):
 
 
 def disable_module(module_name):
-    from {{cookiecutter.project_slug}}.utils import log_action
     """
     Disable a module.
 
@@ -50,6 +48,7 @@ def disable_module(module_name):
 
     :returns: None
     """
+    from {{cookiecutter.project_slug}}.utils import log_action
 
     module_entry = Module.query.filter_by(name=module_name).first()
     if module_entry and module_entry.enabled:
@@ -72,17 +71,18 @@ def load_fixtures(module_path):
     """
     fixtures_path = os.path.join(module_path, 'fixtures.json')
     if os.path.exists(fixtures_path):
-        with open(fixtures_path) as f:
+        with open(fixtures_path, encoding='utf-8') as f:
             data = json.load(f)
             for model_name, records in data.items():
-                model_class = getattr(importlib.import_module(f'modules.{module_path.split("/")[-1]}.models'), model_name)
+                module_name = module_path.split("/")[-1]
+                model_module = importlib.import_module(f'modules.{module_name}.models')
+                model_class = getattr(model_module, model_name)
                 for record in records:
                     db.session.add(model_class(**record))
             db.session.commit()
 
 
 def install_module(zip_path):
-    from {{cookiecutter.project_slug}}.utils import log_action
     """
     Install a module from a zip file.
 
@@ -90,6 +90,8 @@ def install_module(zip_path):
 
     :returns: None
     """
+    from {{cookiecutter.project_slug}}.utils import log_action
+
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
@@ -122,7 +124,8 @@ def create_module(name):
     """
 
     if not re.match(r'^[A-Z][a-z]*([A-Z][a-z]*)*$', name):
-        print(f"Error: '{name}' is not a valid module name. Please use a valid two-word CamelCase format, e.g. 'MyModule'.")
+        print(f"Error: '{name}' is not a valid module name. \
+            Please use a valid one-word or two-word CamelCase format, e.g. 'MyModule'.")
         return
     module_name = name
     module_name_undescore = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
@@ -131,7 +134,8 @@ def create_module(name):
 
     # Ensure the main path exists or create it
     if os.path.exists(path):
-        overwrite = input(f"Module named '{name}' already exists. Overwriting will delete existing data. Do you want to proceed? (yes/no): ").strip().lower()
+        overwrite = input(f"Module named '{name}' already exists. Overwriting will delete \
+            existing data. Do you want to proceed? (yes/no): ").strip().lower()
         if overwrite not in ('yes', 'y'):
             print("Operation cancelled.")
             return
@@ -145,8 +149,7 @@ def create_module(name):
         return
 
     # Define the files to be created
-    main_files = ["__init__.py", "urls.py", "utils.py", "views.py", "models.py", "modules.py"]
-    # main_files = ["__init__.py", "admins.py", "forms.py", "urls.py", "utils.py", "views.py", "models.py", "modules.py"]
+    main_files = ["__init__.py", "urls.py", "utils.py", "views.py", "models.py", "modules.py", "modules.json"]
 
     for file in main_files:
         file_path = os.path.join(path, file)
@@ -170,7 +173,8 @@ def create_module(name):
                         "# Define your routes here\n"
                         "from flask import Blueprint, request, jsonify\n"
                         f"from {current_app.import_name}.extensions import swagger\n\n"
-                        f"{module_name_undescore}_bp = Blueprint('{module_name_undescore}', __name__, url_prefix='/{module_name_undescore}')\n\n"
+                        f"{module_name_undescore}_bp = Blueprint('{module_name_undescore}', \
+                            __name__, url_prefix='/{module_name_undescore}')\n\n"
                     )
                 elif file == "utils.py":
                     f.write("# Define your utility functions here\n")
@@ -206,6 +210,13 @@ def create_module(name):
                         "def register():\n"
                         f"    return {module_name_undescore}_bp\n"
                     )
+                elif file == "modules.json":
+                    f.write(
+                        f"{{\
+                            \"version\": \"1.0.0\",\
+                            \"name\": \"{module_name} Module\"\
+                        }}"
+                    )
             print(f"File created: {file_path}")
         except Exception as e:
             print(f"Error creating file {file}: {e}")
@@ -224,10 +235,10 @@ def create_module(name):
             f.write("<head>\n")
             f.write("    <meta charset='UTF-8'>\n")
             f.write("    <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
-            f.write("    <title>{}</title>\n".format(module_name_undescore))
+            f.write(f"    <title>{module_name_undescore}</title>\n")
             f.write("</head>\n")
             f.write("<body>\n")
-            f.write("    <h1>{}</h1>\n".format(module_name_undescore))
+            f.write("    <h1>{module_name_undescore}</h1>\n")
             f.write("    <p>This is example texts.</p>\n")
             f.write("</body>\n")
             f.write("</html>\n")
