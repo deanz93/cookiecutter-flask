@@ -89,7 +89,6 @@ class S3Storage(object):
         finally:
             print('S3 client initialized.')
 
-
     def upload_file(self, file_path, s3_key):
         """
         Uploads a file to the specified S3 bucket.
@@ -196,3 +195,31 @@ class S3Storage(object):
         except Exception as e:
             current_app.logger.error(f"Failed to list objects in S3: {e}")
             return []
+
+    def put_object(self, key=None):
+        """
+        Creates a folder in the specified S3 bucket.
+
+        Parameters:
+            key (str, optional): The key of the folder to be created. Defaults to None.
+
+        Returns:
+            bool: True if the folder is created successfully, False otherwise.
+
+        Raises:
+            Exception: If an error occurs while creating the folder in the S3 bucket.
+
+        Attempts to create a folder in the specified S3 bucket with the given key.
+        If successful, it returns True.
+        If it fails, it logs the error using the Flask app's logger and returns False.
+        """
+        if key is not None:
+            try:
+                self.s3_client.put_object(
+                    Bucket=self.bucket_name,
+                    Key=key
+                )
+                return True
+            except Exception as e:
+                current_app.logger.error(f"Failed to create folder in S3: {e}")
+                return False

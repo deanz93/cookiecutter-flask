@@ -32,7 +32,7 @@ db.migrate.upgrade:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py db upgrade
 
 db.seed:
-	docker compose -f docker-compose.local.yml run --rm app flask --app run.py seed run
+	docker compose -f docker-compose.local.yml run --rm app flask --app run.py database seed
 
 db.auto_discover_models:
 	docker compose -f docker-compose.local.yml run --rm app flask --app run.py database auto_discover

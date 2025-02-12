@@ -25,6 +25,9 @@ class Config:
     TEMPLATES_AUTO_RELOAD = True
 {% if cookiecutter.use_cloud_storage == 'y' %}
     # Cloud Storage
+    USE_S3 = ast.literal_eval(
+        os.getenv("USE_S3", 'False')
+    )
     S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
     S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY")
     S3_ENDPOINT = os.getenv("S3_ENDPOINT")
