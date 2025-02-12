@@ -24,6 +24,20 @@ users_blueprint = Blueprint(
 )
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    """
+    This function is used by Flask-Login to load a user by their id.
+
+    Args:
+        user_id (int): The id of the user to load.
+
+    Returns:
+        A User object, or None if no user with the given id could be found.
+    """
+    return User.query.get(user_id)
+
+
 @users_blueprint.route("/login/", methods=["POST", "GET"])
 def login():
     """
