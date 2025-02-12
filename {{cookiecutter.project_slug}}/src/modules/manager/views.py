@@ -14,6 +14,7 @@ import shutil
 import zipfile
 
 from flask import current_app
+from packaging.version import Version
 
 from {{cookiecutter.project_slug}}.extensions import db
 from {{cookiecutter.project_slug}}.utils import log_action
@@ -90,15 +91,31 @@ def install_module(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
-        if extracted_dirs:
-            module_name = extracted_dirs[0].split('/')[0]
-            module_entry = Module.query.filter_by(name=module_name).first()
-            if not module_entry:
-                module_entry = Module(name=module_name, enabled=True, version='1.0.0')
-                db.session.add(module_entry)
+        module_path = os.path.join('modules', extracted_dirs[0].split('/')[0])
+        modules_json_path = os.path.join(module_path, 'modules.json')
+        module_name = extracted_dirs[0].split('/')[0]
+        if os.path.exists(modules_json_path):
+            with open(modules_json_path, encoding='utf-8') as f:
+                data = json.load(f)
+                next_version = data['version']
+
+                module_entry = Module.query.filter_by(name=data['name']).first()
+                if module_entry:
+                    current_version = module_entry.version
+                    if Version(next_version) > Version(current_version):
+                        shutil.rmtree(module_path)
+                        module_entry.version = data['version']
+                        db.session.commit()
+                        log_action(f"Updated Module {data['name']}", module_entry.id)
+                        return
+                    log_action(f"Module {data['name']} no changes.", module_entry.id)
+                    return
+                new_module = Module(name=data['name'], enabled=True, version=next_version)
+                db.session.add(new_module)
                 db.session.commit()
                 load_fixtures(os.path.join('modules', module_name))
-                log_action("Installed Module", module_name)
+                log_action(f"Installed Module {data['name']}", new_module.id)
+                return
 
 
 def create_module(name):
