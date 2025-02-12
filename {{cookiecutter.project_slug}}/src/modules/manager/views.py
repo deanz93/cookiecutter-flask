@@ -16,6 +16,7 @@ import zipfile
 from flask import current_app
 
 from {{cookiecutter.project_slug}}.extensions import db
+from {{cookiecutter.project_slug}}.utils import log_action
 
 from .models import Module
 
@@ -28,15 +29,13 @@ def enable_module(module_name):
 
     :returns: A message indicating that the server is restarting.
     """
-    from {{cookiecutter.project_slug}}.utils import log_action
-
     module_entry = Module.query.filter_by(name=module_name).first()
 
     if module_entry and not module_entry.enabled:
         importlib.import_module(f'modules.{module_name}.modules')
         module_entry.enabled = True
         db.session.commit()
-        log_action("Enabled Module", module_name)
+        log_action("Enabled Module", module_entry.id)
         return "Restarting Flask..."
 
 
@@ -48,8 +47,6 @@ def disable_module(module_name):
 
     :returns: None
     """
-    from {{cookiecutter.project_slug}}.utils import log_action
-
     module_entry = Module.query.filter_by(name=module_name).first()
     if module_entry and module_entry.enabled:
         rules_to_remove = [rule for rule in current_app.url_map.iter_rules() if rule.endpoint.startswith(module_name)]
@@ -58,7 +55,7 @@ def disable_module(module_name):
             current_app.view_functions.pop(rule.endpoint, None)
         module_entry.enabled = False
         db.session.commit()
-        log_action("Disabled Module", module_name)
+        log_action("Disabled Module", module_entry.id)
 
 
 def load_fixtures(module_path):
@@ -90,8 +87,6 @@ def install_module(zip_path):
 
     :returns: None
     """
-    from {{cookiecutter.project_slug}}.utils import log_action
-
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall('modules')
         extracted_dirs = [name for name in zip_ref.namelist() if '/' in name and '__init__.py' in name]
