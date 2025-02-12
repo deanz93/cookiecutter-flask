@@ -6,6 +6,7 @@ The models defined here include:
 - Organization: Represents an organization with details, related to a user as admin.
 """
 import uuid
+from flask_login import UserMixin
 from sqlalchemy.sql import func
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -13,7 +14,7 @@ from database.core import Mixin
 from {{ cookiecutter.project_slug }}.extensions import db
 
 
-class User(Mixin, db.Model):
+class User(Mixin, db.Model, UserMixin):
     """Person Table."""
 
     __tablename__ = "person"
