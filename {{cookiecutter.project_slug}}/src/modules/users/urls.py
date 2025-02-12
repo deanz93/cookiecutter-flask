@@ -9,24 +9,28 @@ Imports:
     - flasgger: A library for generating Swagger documentation.
 """
 
+from datetime import timedelta
 from flasgger import swag_from
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, render_template, jsonify, redirect, session, url_for
+from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, unset_jwt_cookies
+from flask_login import login_user, logout_user
+
+from {{ cookicutter.project_slug }}.extensions import login_manager
 from modules.users.models import User
 from modules.users.views import create_user
-
 
 users_blueprint = Blueprint(
     "users", __name__, template_folder="templates", url_prefix="/users"
 )
 
 
-@users_blueprint.route("/signin/", methods=["POST"])
-def signin():
+@users_blueprint.route("/login/", methods=["POST", "GET"])
+def login():
     """
     Sign in
     ---
     tags:
-      - users
+      - Authentication
     consumes:
         - application/json
     requestBody:
@@ -51,16 +55,46 @@ def signin():
         401:
             description: User is not able to sign in.
     """
-    email = request.json.get("email").strip()
-    password = request.json.get("password").strip()
+    if request.method == "GET":
+        # Serve the login page for web users
+        return render_template("login.html")
+
+    # Check if the request is JSON (API)
+    if request.is_json:
+        data = request.get_json()
+        email = data.get("email", "").strip()
+        password = data.get("password", "").strip()
+    else:
+        # Handle form submission (Session-based)
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "").strip()
 
     user = User.query.filter_by(email=email).first()
 
     if user and user.check_password(password):
         # Check if the user is enabled
         if user.active:
-            return jsonify(
-                {"message": f"User {email} signed in successfully."}), 200
+            if request.is_json:
+                expires_delta = timedelta(hours=1)
+                access_token = create_access_token(identity=user.id, expires_delta=expires_delta)
+                refresh_token = create_refresh_token(identity=user.id, expires_delta=timedelta(days=5))
+
+                response = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "expires_in": expires_delta.total_seconds(),  # Expiry time in seconds
+                    "token_type": "Bearer"
+                }
+                set_access_cookies(response, access_token)
+
+                return jsonify(), 200
+
+            login_user(user)  # Start a session
+            session["user_id"] = user.id  # Store in session
+
+            # Web request → Redirect to dashboard (or any page)
+            return redirect(url_for("modules.module"))
+
         else:
             return jsonify({"message": "User is disabled."}), 401
     else:
@@ -160,6 +194,44 @@ def register_user():
     )
 
     return jsonify(result), result["code"]
+
+
+@users_blueprint.route("/logout/", methods=["POST", "GET"])
+def logout_current_user():
+    """
+    Logout user
+    ---
+    tags:
+      - Authentication
+    consumes:
+        - application/json
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            logout_all:
+              type: boolean
+              default: false
+    responses:
+        200:
+            description: User successfully logged out
+        401:
+            description: User is not signed in
+        500:
+            description: An error occurred during logout
+    """
+    # API logout
+    if request.is_json:
+        response = jsonify({"msg": "logout successful"}), 200
+        unset_jwt_cookies(response)
+        return response
+
+    # Session-based logout
+    logout_user()
+    session.pop("user_id", None)
+    return redirect(url_for("users.login"))
 
 
 @users_blueprint.route("/enable/", methods=["POST"])

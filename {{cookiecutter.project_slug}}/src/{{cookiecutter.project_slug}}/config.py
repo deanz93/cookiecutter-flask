@@ -33,6 +33,10 @@ class Config:
 {% endif %}
     # JWT conf
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_TOKEN_LOCATION = os.getenv("JWT_TOKEN_LOCATION", "cookies")
+    JWT_COOKIE_SECURE = ast.literal_eval(
+        os.getenv("JWT_COOKIE_SECURE"))
+
     SESSION_TYPE = os.getenv("SESSION_TYPE")
     SESSION_PERMANENT = ast.literal_eval(
         os.getenv("SESSION_PERMANENT"))
@@ -90,8 +94,8 @@ class Config:
             }
         },
         "security": [
-            {"BasicAuth": [requires_basic_auth]},
-            {"BearerAuth": [requires_bearer_auth]}
+            {"BasicAuth": []},
+            {"BearerAuth": []}
         ]
     }{% endif %}
 

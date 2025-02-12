@@ -23,6 +23,7 @@ from .extensions import (
     {% if cookiecutter.use_email_service == 'y' %}mail,{% endif %}
     {% if cookiecutter.use_cloud_storage == 'y' %}s3,{% endif %}
     {% if cookiecutter.authentication_type == "Firebase" %}firebase,{% endif %}
+    login_manager,
     )
 
 
@@ -63,6 +64,8 @@ def create_app(config_class=Config):
     s3.init_app(app){% endif %}
     {% if cookiecutter.use_email_service == 'y' %}# Initialize the Mail
     mail.init_app(app){% endif %}
+    # initialize the login manager
+    login_manager.init_app(app)
 
     {% if cookiecutter.authentication_type == "Firebase" %}firebase.init_app(app){% endif %}
 
@@ -108,10 +111,20 @@ def create_app(config_class=Config):
     return app
 
 
-def load_modules(app, installed_apps=[]):
+def load_modules(app, installed_apps=None):
+    """
+    Loads modules from the 'modules' directory and registers them with the Flask app.
+
+    Args:
+        app (Flask): The Flask application instance.
+        installed_apps (list): A list of installed app names. Defaults to an empty list.
+
+    Returns:
+        None
+    """
     modules_dir = 'modules'
 
-    if len(installed_apps) > 0:
+    if installed_apps is not None:
         for module_name in installed_apps:
             try:
                 module = importlib.import_module(f'modules.{module_name}.modules')
