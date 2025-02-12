@@ -41,7 +41,7 @@ def module():
                 install_module(filepath)
                 flash(f'Module {file.filename} installed successfully!', 'success')
 
-        return redirect(url_for('module.admin'))
+        return redirect(url_for('modules.module'))
 
     modules = Module.query.all()
     logs = Log.query.order_by(Log.timestamp.desc()).limit(10).all()
