@@ -146,8 +146,9 @@ def create_module(name):
 
     # Ensure the main path exists or create it
     if os.path.exists(path):
-        overwrite = input(f"Module named '{name}' already exists. Overwriting will delete \
-            existing data. Do you want to proceed? (yes/no): ").strip().lower()
+        module_exist = f"Module named '{name}' already exists"
+        overwrite_question = "Overwriting will delete existing data. Do you want to proceed? (yes/no):"
+        overwrite = input(f"{module_exist}. {overwrite_question}").strip().lower()
         if overwrite not in ('yes', 'y'):
             print("Operation cancelled.")
             return
@@ -181,19 +182,22 @@ def create_module(name):
                         "from wtforms import Form, StringField, validators\n\n"
                     )
                 elif file == "urls.py":
+                    blueprint_code = (
+                        f"{module_name_underscore}_bp = Blueprint('{module_name_underscore}', "
+                        f"__name__, url_prefix='/{module_name_underscore}')\n"
+                    )
                     f.write(
                         "# Define your routes here\n"
                         "from flask import Blueprint, request, jsonify\n"
                         f"from {current_app.import_name}.extensions import swagger\n\n"
-                        f"{module_name_underscore}_bp = Blueprint('{module_name_underscore}', \
-                            __name__, url_prefix='/{module_name_underscore}')\n\n"
+                        f"{blueprint_code}"
                     )
                 elif file == "utils.py":
                     f.write("# Define your utility functions here\n")
                 elif file == "views.py":
                     f.write(
                         "# Define your views here\n"
-                        "from flask import render_template, request\n\n"
+                        "from flask import render_template, request\n"
                     )
                 elif file == "models.py":
                     f.write(
@@ -218,7 +222,7 @@ def create_module(name):
                 elif file == "modules.py":
                     f.write(
                         "# Register your blueprint here\n"
-                        f"from .urls import {module_name_underscore}_bp\n\n"
+                        f"from .urls import {module_name_underscore}_bp\n\n\n"
                         "def register():\n"
                         f"    return {module_name_underscore}_bp\n"
                     )
