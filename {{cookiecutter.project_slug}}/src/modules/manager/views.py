@@ -140,9 +140,9 @@ def create_module(name):
             Please use a valid one-word or two-word CamelCase format, e.g. 'MyModule'.")
         return
     module_name = name
-    module_name_undescore = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    module_name_underscore = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
     cur_dir = os.path.abspath(os.getcwd())
-    path = os.path.join(cur_dir, 'modules', module_name_undescore)
+    path = os.path.join(cur_dir, 'modules', module_name_underscore)
 
     # Ensure the main path exists or create it
     if os.path.exists(path):
@@ -185,8 +185,8 @@ def create_module(name):
                         "# Define your routes here\n"
                         "from flask import Blueprint, request, jsonify\n"
                         f"from {current_app.import_name}.extensions import swagger\n\n"
-                        f"{module_name_undescore}_bp = Blueprint('{module_name_undescore}', \
-                            __name__, url_prefix='/{module_name_undescore}')\n\n"
+                        f"{module_name_underscore}_bp = Blueprint('{module_name_underscore}', \
+                            __name__, url_prefix='/{module_name_underscore}')\n\n"
                     )
                 elif file == "utils.py":
                     f.write("# Define your utility functions here\n")
@@ -207,7 +207,7 @@ def create_module(name):
                         "\n\n"
                         f"class {module_name}(Mixin, db.Model):\n"
                         "\n"
-                        f"    __tablename__ = '{module_name_undescore}'\n"
+                        f"    __tablename__ = '{module_name_underscore}'\n"
                         "\n"
                         "    id = db.Column(\n"
                         "        db.String(36),\n"
@@ -218,17 +218,16 @@ def create_module(name):
                 elif file == "modules.py":
                     f.write(
                         "# Register your blueprint here\n"
-                        f"from .urls import {module_name_undescore}_bp\n\n"
+                        f"from .urls import {module_name_underscore}_bp\n\n"
                         "def register():\n"
-                        f"    return {module_name_undescore}_bp\n"
+                        f"    return {module_name_underscore}_bp\n"
                     )
                 elif file == "modules.json":
-                    f.write(
-                        f"{{\
-                            \"version\": \"1.0.0\",\
-                            \"name\": \"{module_name} Module\"\
-                        }}"
-                    )
+                    data = {
+                        "version": "1.0.0",
+                        "name": module_name_underscore
+                    }
+                    json.dump(data, f, indent=4)
             print(f"File created: {file_path}")
         except Exception as e:
             print(f"Error creating file {file}: {e}")
@@ -240,17 +239,17 @@ def create_module(name):
         print(f"Models directory created at: {models_folder}")
 
         # Create the models file with capitalized name
-        template_file_path = os.path.join(models_folder, f"{module_name_undescore}.html")
+        template_file_path = os.path.join(models_folder, f"{module_name_underscore}.html")
         with open(template_file_path, "w", encoding="utf-8") as f:
             f.write("<!DOCTYPE html>\n")
             f.write("<html lang='en'>\n")
             f.write("<head>\n")
             f.write("    <meta charset='UTF-8'>\n")
             f.write("    <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n")
-            f.write(f"    <title>{module_name_undescore}</title>\n")
+            f.write(f"    <title>{module_name_underscore}</title>\n")
             f.write("</head>\n")
             f.write("<body>\n")
-            f.write("    <h1>{module_name_undescore}</h1>\n")
+            f.write("    <h1>{module_name_underscore}</h1>\n")
             f.write("    <p>This is example texts.</p>\n")
             f.write("</body>\n")
             f.write("</html>\n")
