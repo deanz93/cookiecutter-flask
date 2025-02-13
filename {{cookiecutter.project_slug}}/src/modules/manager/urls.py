@@ -7,6 +7,7 @@ It provides a web interface for managing (enabling/disabling) and installing mod
 import os
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
 from .models import Module, Log
 from .views import enable_module, disable_module, install_module
@@ -17,6 +18,7 @@ module_blueprint = Blueprint('modules', __name__, template_folder='templates', u
 
 # Admin panel
 @module_blueprint.route('/manager/', methods=['GET', 'POST'])
+@login_required
 def module():
     """
     The admin panel for managing modules.
@@ -42,6 +44,9 @@ def module():
                 flash(f'Module {file.filename} installed successfully!', 'success')
 
         return redirect(url_for('modules.module'))
+
+    if not current_user.is_authenticated or not current_user.is_admin:
+        return redirect(url_for('auth.login'))
 
     modules = Module.query.all()
     logs = Log.query.order_by(Log.timestamp.desc()).limit(10).all()
